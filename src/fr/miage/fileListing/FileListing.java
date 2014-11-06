@@ -14,21 +14,20 @@ public class FileListing {
 	 */
 	List<File> contenu = new ArrayList<>();
 	
-	
 	/**
 	 * repertoire courant (celui selectionné par l'utilisateur, "." par default
 	 */
 	File repCourant;
 	
 	// au démarrage, afficher le contenu du dossier courant (default)
-	FileListing(){
+	FileListing()
+	{
 		repCourant = new File(".");
 		File[] files = repCourant.listFiles();
 		for (int i = 0; i<files.length; i++)
 		{
-			
+			contenu.add(files[i]);
 		}
-		
 	}
 	
 	
@@ -37,15 +36,27 @@ public class FileListing {
 	/////////////////////////////////////////////////////////////////////
 
 	public File getRepCourant() {
-		return repCourant;
+		return this.repCourant;
 	}
 
 	public void setRepCourant(File repCourant) {
-		this.repCourant = repCourant;
+		try
+		{
+			this.repCourant = repCourant;
+			this.contenu.clear();
+			File[] listFiles = this.repCourant.listFiles();
+			for (int i = 0; i<listFiles.length; i++){
+				this.contenu.add(listFiles[i]);
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("Fichier/Dossier inexistant");
+		}
 	}
 
 	public List<File> getContenu() {
-		return contenu;
+		return this.contenu;
 	}
 	
 	/////////////////////////////////////////////////////////////////////
@@ -55,7 +66,14 @@ public class FileListing {
 	 * @param null
 	 * @return 
 	 */
-//	public remonter
+	public void remonter(){
+		repCourant = new File("..");
+		File[] listFiles = repCourant.listFiles();
+		contenu.clear();
+		for (int i = 0; i<listFiles.length; i++){
+			contenu.add(listFiles[i]);
+		}
+	}
 
 	
 //	/**
@@ -65,11 +83,25 @@ public class FileListing {
 //	 */
 //	
 	/**
-	 * Créer un dossier, dans le dossier courant
-	 * @param nomDossier
+	 * Créer un dossier/fichier, dans le dossier courant
+	 * @param nomDossier/fichier
 	 * @return boolean création possible ou impossible
 	 */
-
+	public boolean createFile(String name){
+		try
+		{
+		File newFile = new File("./"+name);
+		System.out.println("Fichier créé "+newFile.getPath());
+		this.contenu.add(newFile);
+		System.out.println("Fichier ajouté au contenu");
+		return true;
+		}
+		catch(Exception e){
+			System.out.println("Création impossible");
+			return false;
+		}
+		
+	}
 
 	
 }
