@@ -22,7 +22,7 @@ public class FileListing {
 	File repCourant;
 
 	// au démarrage, afficher le contenu du dossier courant (default)
-	public FileListing() {
+	FileListing() {
 		repCourant = new File(".");
 		File[] listFiles = repCourant.listFiles();
 		for (int i = 0; i < listFiles.length; i++) {
@@ -149,4 +149,3 @@ public class FileListing {
 	}
 
 }
-
