@@ -1,2 +1,0 @@
-créer des interface pour les plugins
-avec les méthodes nécéssaires pour chaque plugin (méthode générique)

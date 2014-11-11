@@ -1,4 +1,4 @@
-package fr.miage.fileListing;
+package fr.miage.model;
 
 import java.io.File;
 import java.util.ArrayList;
