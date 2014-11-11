@@ -1,4 +1,4 @@
-package fr.miage.GUI;
+package fr.miage.fileListing;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
