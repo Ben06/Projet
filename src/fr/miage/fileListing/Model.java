@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Model {
 	
+//	public static FileListing list;
 	/**
 	 * repertoire courant de l'explorateur
 	 */
@@ -17,10 +18,32 @@ public class Model {
 	public static List<File> contenu = new ArrayList<File>();
 	
 	
+	public static List<String> fileNames = new ArrayList<>();
+	
+//	public static FileListing getList() {
+//		return list;
+//	}
+//
+//	public static void setList(FileListing list) {
+//		Model.list = list;
+//	}
+
+	
 	public static File getRepCourant() {
 		return repCourant;
 	}
 
+	public static List<String> getFileNames() {
+		return fileNames;
+	}
+
+	public static void setFileNames(List<String> fileNames) {
+		Model.fileNames = fileNames;
+	}
+	
+	public static String getFileNames(int index){
+		return Model.fileNames.get(index);
+	}
 	public static void setRepCourant(File repCourant) {
 		Model.repCourant = repCourant;
 	}
@@ -29,6 +52,10 @@ public class Model {
 		return contenu;
 	}
 
+	public static File getContenu(int index){
+		return contenu.get(index);
+	}
+	
 	public static void setContenu(List<File> contenu) {
 		Model.contenu = contenu;
 	}

@@ -11,6 +11,7 @@ import javax.swing.JButton;
 public class CreateFolderGUI extends JFrame {
 
 	String fileName="";
+	Model model = new Model();
 	FileListing list = new FileListing();
 	
 	public CreateFolderGUI() {
@@ -34,6 +35,7 @@ public class CreateFolderGUI extends JFrame {
 				if (result==true)
 				{
 					FolderCreatedFrame created = new FolderCreatedFrame();
+//					model.getContenu().add()	ajouter le dossier à la liste de contenu du dossier
 				}
 				else
 				{
