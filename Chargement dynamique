@@ -1,0 +1,2 @@
+Le chargement dynamique permet à chaque fois qu’on ajoute un plugin sur le 
+ dossier des plugins, il s’ajoute automatiquement dans le menu plugins au niveau de la barre de menu.
