@@ -1,4 +1,4 @@
-package fr.miage.fileListing;
+package fr.miage.GUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
+
+import fr.miage.fileListing.FileListing;
+import fr.miage.model.Model;
 
 public class CreateFolderGUI extends JFrame {
 
