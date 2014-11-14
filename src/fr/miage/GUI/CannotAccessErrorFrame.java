@@ -1,4 +1,4 @@
-package fr.miage.fileListing;
+package fr.miage.GUI;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;

@@ -1,4 +1,4 @@
-package fr.miage.fileListing;
+package fr.miage.GUI;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+
+import fr.miage.Model.Model;
 
 public class SuppressConfirmation extends JFrame
 {

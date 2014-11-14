@@ -10,6 +10,8 @@ import java.nio.file.attribute.DosFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.miage.Model.Model;
+
 
 // bug : lorsque l'on remonte jusqu'a c:, ou que l'on souhaite définir c: répertoire courant, on ne peut pas, à la place le repertoire courant
 // "." est ajouté à la place. A corriger par la suite.
@@ -32,7 +34,7 @@ public class FileListing
 
 
 	// au démarrage, afficher le contenu du dossier courant (default)
-	FileListing()
+	public FileListing()
 	{
 		repCourant = new File(".");
 
