@@ -20,6 +20,9 @@ public class Model {
 	
 	public static List<String> fileNames = new ArrayList<>();
 	
+	
+	public static File selectedFile;
+	
 //	public static FileListing getList() {
 //		return list;
 //	}
@@ -27,10 +30,20 @@ public class Model {
 //	public static void setList(FileListing list) {
 //		Model.list = list;
 //	}
-
+	
 	
 	public static File getRepCourant() {
 		return repCourant;
+	}
+
+	public static File getSelectedFile()
+	{
+		return selectedFile;
+	}
+
+	public static void setSelectedFile(File selectedFile)
+	{
+		Model.selectedFile = selectedFile;
 	}
 
 	public static List<String> getFileNames() {

@@ -10,6 +10,10 @@ import javax.swing.JButton;
 
 public class CreateFolderGUI extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String fileName="";
 	Model model = new Model();
 	FileListing list = new FileListing();
@@ -35,7 +39,10 @@ public class CreateFolderGUI extends JFrame {
 				if (result==true)
 				{
 					FolderCreatedFrame created = new FolderCreatedFrame();
-//					model.getContenu().add()	ajouter le dossier à la liste de contenu du dossier
+					if(!created.isActive())
+					{
+						CreateFolderGUI.this.dispose();
+					}
 				}
 				else
 				{
