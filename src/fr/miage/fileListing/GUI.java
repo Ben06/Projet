@@ -23,14 +23,18 @@ import javax.swing.JTree;
 import javax.swing.ListModel;
 import javax.swing.JScrollPane;
 
-public class GUI extends JFrame {
+
+public class GUI extends JFrame
+{
 
 	FileListing listing;
 	Model model = new Model();
 	JList list;
 	JScrollPane scrollPane;
 
-	GUI() {
+
+	GUI()
+	{
 		listing = new FileListing();
 		model.setRepCourant(listing.getRepCourant());
 		model.setContenu(listing.getContenu());
@@ -42,8 +46,10 @@ public class GUI extends JFrame {
 
 		// créer un nouveau dossier, dans le repertoire courant
 		JButton newFile = new JButton("New");
-		newFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		newFile.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent arg0)
+			{
 				CreateFolderGUI createFolder = new CreateFolderGUI();
 			}
 		});
@@ -53,22 +59,33 @@ public class GUI extends JFrame {
 
 		// remonter l'arborescence d'un cran
 		JButton btnRemonter = new JButton("UP");
-		btnRemonter.addActionListener(new ActionListener() {
+		btnRemonter.addActionListener(new ActionListener()
+		{
+			CannotAccessErrorFrame error = null;
+
+
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				listing.remonter();
-				rebuildList();
-		}});
+			public void actionPerformed(ActionEvent arg0)
+			{
+				boolean result = listing.remonter();
+				if (result)
+					rebuildList();
+				else
+					error = new CannotAccessErrorFrame();
+			}
+		});
 
 		btnRemonter.setBounds(208, 28, 79, 23);
 		getContentPane().add(btnRemonter);
 
 		// retourner à c: ou au bureau, à définir
 		JButton btnHome = new JButton("Home");
-		btnHome.addActionListener(new ActionListener() {
+		btnHome.addActionListener(new ActionListener()
+		{
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				listing.setRepCourant("C:\\Users\\deptinfo\\Documents\\TP\\Prog_Projet");
+			public void actionPerformed(ActionEvent arg0)
+			{
+				listing.setRepCourant("C:\\Users\\deptinfo\\Documents\\GitHub\\ProjetProg\\Projet");
 				rebuildList();
 			}
 		});
@@ -81,31 +98,42 @@ public class GUI extends JFrame {
 		scrollPane.setLocation(155, 75);
 		list = new JList(Model.getFileNames().toArray());
 		list.setBounds(155, 76, 319, 205);
-		
-		GUI.this.list.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent evt) {
+
+		GUI.this.list.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent evt)
+			{
 				JList list = (JList) evt.getSource();
-				if (evt.getClickCount() == 2) {
+				if (evt.getClickCount() == 1)
+				{
 					int index = list.locationToIndex(evt.getPoint());
-					if (GUI.this.model.getContenu(index).isDirectory()) {
-						try {
-							
-							listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
-							rebuildList();
-							
-							
-							
-							
-						} catch (IOException e) {
+					GUI.this.model.setSelectedFile(GUI.this.model.getContenu(index));
+				}
+				if (evt.getClickCount() == 2)
+				{
+					int index = list.locationToIndex(evt.getPoint());
+					if (GUI.this.model.getContenu(index).isDirectory())
+					{
+						try
+						{
+							// System.out.println("GUI.GUI().new MouseAdapter() {...}.mouseClicked() avant le set rep");
+							CannotAccessErrorFrame error = null;
+							boolean result = listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
+							if (!result)
+								error = new CannotAccessErrorFrame();
+							else
+								rebuildList();
+						} catch (IOException e)
+						{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					}
-					else
+					} else
 					{
 						System.out.println("GUI.rebuildList().new MouseAdapter() {...}.mouseClicked() pas un repertoire!");
 					}
-				} else if (evt.getClickCount() == 3) { // Triple-click
+				} else if (evt.getClickCount() == 3)
+				{ // Triple-click
 					int index = list.locationToIndex(evt.getPoint());
 
 				}
@@ -140,6 +168,19 @@ public class GUI extends JFrame {
 		tree.setBounds(21, 76, 124, 205);
 		getContentPane().add(tree);
 
+		JButton btnDelete = new JButton("Delete");
+		btnDelete.setBounds(312, 28, 63, 23);
+		btnDelete.addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				SuppressConfirmation delete = new SuppressConfirmation();
+			}
+		});
+		getContentPane().add(btnDelete);
+
 		// JScrollPane scrollPane = new JScrollPane();
 		// scrollPane.setBounds(155, 76, 200, 50);
 		// getContentPane().add(scrollPane);
@@ -148,8 +189,9 @@ public class GUI extends JFrame {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-	
-	public void rebuildList(){
+
+	public void rebuildList()
+	{
 		Model.setRepCourant(listing.getRepCourant());
 		Model.setContenu(listing.getContenu());
 		Model.setFileNames(listing.getFileNames());
@@ -171,28 +213,43 @@ public class GUI extends JFrame {
 		GUI.this.list = new JList(Model.getFileNames().toArray());
 		GUI.this.list.setBounds(155, 76, 319, 205);
 
-		GUI.this.list.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent evt) {
+		GUI.this.list.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent evt)
+			{
 				JList list = (JList) evt.getSource();
-				if (evt.getClickCount() == 2) {
+				if (evt.getClickCount() == 1)
+				{
 					int index = list.locationToIndex(evt.getPoint());
-					if (GUI.this.model.getContenu(index).isDirectory()) {
-						try {
-							
-							listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
-							rebuildList();
-							
-						} catch (IOException e) {
+					GUI.this.model.setSelectedFile(GUI.this.model.getContenu(index));
+				}
+				if (evt.getClickCount() == 2)
+				{
+					int index = list.locationToIndex(evt.getPoint());
+					if (GUI.this.model.getContenu(index).isDirectory())
+					{
+						try
+						{
+							CannotAccessErrorFrame error = null;
+							boolean result = listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
+
+							if (result)
+								rebuildList();
+							else
+								error = new CannotAccessErrorFrame();
+
+						} catch (IOException e)
+						{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					}
-					else
+					} else
 					{
 						System.out.println("GUI.rebuildList().new MouseAdapter() {...}.mouseClicked() pas un repertoire!");
 					}
-					
-				} else if (evt.getClickCount() == 3) { // Triple-click
+
+				} else if (evt.getClickCount() == 3)
+				{ // Triple-click
 					int index = list.locationToIndex(evt.getPoint());
 
 				}
@@ -207,8 +264,9 @@ public class GUI extends JFrame {
 
 	}
 
-	
-	public static void main(String[] args) {
+
+	public static void main(String[] args)
+	{
 		GUI myGUI = new GUI();
 
 	}
