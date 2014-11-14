@@ -1,107 +1,195 @@
 package fr.miage.fileListing;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.DosFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
 
+// bug : lorsque l'on remonte jusqu'a c:, ou que l'on souhaite définir c: répertoire courant, on ne peut pas, à la place le repertoire courant
+// "." est ajouté à la place. A corriger par la suite.
 
+public class FileListing
+{
 
-public class FileListing {
+	Model model = new Model();
 
 	/**
 	 * liste du contenu du repertoire que l'on souhaite afficher
 	 */
 	List<File> contenu = new ArrayList<>();
-	
+
+	List<String> fileNames = new ArrayList<>();
 	/**
 	 * repertoire courant (celui selectionné par l'utilisateur, "." par default
 	 */
 	File repCourant;
-	
+
+
 	// au démarrage, afficher le contenu du dossier courant (default)
 	FileListing()
 	{
 		repCourant = new File(".");
-		File[] files = repCourant.listFiles();
-		for (int i = 0; i<files.length; i++)
+
+		File[] listFiles = repCourant.listFiles();
+		for (int i = 0; i < listFiles.length; i++)
 		{
-			contenu.add(files[i]);
+			contenu.add(listFiles[i]);
+			fileNames.add(listFiles[i].getName());
 		}
 	}
-	
-	
-	/////////////////////////////////////////////////////////////////////
-	//////////////////////////// Getters & Setters //////////////////////
-	/////////////////////////////////////////////////////////////////////
 
-	public File getRepCourant() {
+
+	// ///////////////////////////////////////////////////////////////////
+	// ////////////////////////// Getters & Setters //////////////////////
+	// ///////////////////////////////////////////////////////////////////
+
+	public File getRepCourant()
+	{
 		return this.repCourant;
 	}
 
-	public void setRepCourant(File repCourant) {
-		try
+
+	public List<String> getFileNames()
+	{
+		return fileNames;
+	}
+
+
+	public boolean setRepCourant(String repCourant)
+	{
+		// System.out.println("FileListing.setRepCourant() repToChange : " +
+		// repCourant);
+		File repToChange = new File(repCourant);
+
+		if (repToChange.listFiles() == null)
 		{
-			this.repCourant = repCourant;
+			return false;
+		} else
+		{
+			this.repCourant = repToChange;
+			// System.out.println("FileListing.setRepCourant() repCourant après setter : "
+			// + this.repCourant);
 			this.contenu.clear();
-			File[] listFiles = this.repCourant.listFiles();
-			for (int i = 0; i<listFiles.length; i++){
+			this.fileNames.clear();
+			System.out.println("FileListing.setRepCourant() avant le listFile");
+			File[] listFiles = repToChange.listFiles();
+			System.out.println("FileListing.setRepCourant() après le listFile " + listFiles);
+
+			for (int i = 0; i < listFiles.length; i++)
+			{
+				// System.out.println("FileListing.setRepCourant() listFiles true");
 				this.contenu.add(listFiles[i]);
+				this.fileNames.add(listFiles[i].getName());
 			}
-		}
-		catch(Exception e)
-		{
-			System.out.println("Fichier/Dossier inexistant");
+			return true;
 		}
 	}
 
-	public List<File> getContenu() {
+
+	public List<File> getContenu()
+	{
 		return this.contenu;
 	}
-	
-	/////////////////////////////////////////////////////////////////////
-	
+
+
+	// ///////////////////////////////////////////////////////////////////
+
 	/**
 	 * Remonter dans l'arborescence
+	 * 
 	 * @param null
-	 * @return 
+	 * @return
 	 */
-	public void remonter(){
-		repCourant = new File("..");
-		File[] listFiles = repCourant.listFiles();
-		contenu.clear();
-		for (int i = 0; i<listFiles.length; i++){
-			contenu.add(listFiles[i]);
-		}
-	}
-
-	
-//	/**
-//	 * Descendre dans l'arborescence
-//	 * @param null
-//	 * @return
-//	 */
-//	
-	/**
-	 * Créer un dossier/fichier, dans le dossier courant
-	 * @param nomDossier/fichier
-	 * @return boolean création possible ou impossible
-	 */
-	public boolean createFile(String name){
+	public boolean remonter()
+	{
 		try
 		{
-		File newFile = new File("./"+name);
-		System.out.println("Fichier créé "+newFile.getPath());
-		this.contenu.add(newFile);
-		System.out.println("Fichier ajouté au contenu");
-		return true;
-		}
-		catch(Exception e){
-			System.out.println("Création impossible");
+			if (repCourant.getCanonicalPath().endsWith(":"))
+			{
+				System.out.println("FileListing.remonter() impossible de remonter plus, repertoire courant = root");
+			} else
+			{
+				String currentPath = repCourant.getCanonicalPath();
+				String[] folders = currentPath.split("\\\\");
+				String upPath = "";
+				for (int i = 0; i < folders.length - 1; i++)
+				{
+					if (i == folders.length - 2)
+						upPath += folders[i];
+					else
+						upPath += folders[i] + "\\";
+				}
+				System.out.println("------------------------------- \n FileListing.remonter() " + upPath);
+				setRepCourant(upPath);
+				System.out.println("FileListing.remonter() après le setRepCourant : " + repCourant.getCanonicalPath());
+				File[] listFiles = repCourant.listFiles();
+				contenu.clear();
+				fileNames.clear();
+				if (listFiles != null)
+				{
+					for (int i = 0; i < listFiles.length; i++)
+					{
+						// System.out.println("FileListing.remonter() "+listFiles[i]);
+						contenu.add(listFiles[i]);
+						fileNames.add(listFiles[i].getName());
+					}
+					return true;
+				} else
+					return false;
+			}
+		} catch (IOException e)
+		{
 			return false;
 		}
-		
+		return false;
 	}
 
-	
+
+	/**
+	 * Créer un dossier/fichier, dans le dossier courant
+	 * 
+	 * @param nomDossier
+	 *            /fichier
+	 * @return boolean création possible ou impossible
+	 */
+	public boolean createFile(String name)
+	{
+		boolean result = false;
+		try
+		{
+			result = new File(model.getRepCourant().getCanonicalPath() + "\\" + name).mkdir();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+
+	public String toString()
+	{
+		String res = "";
+		for (int i = 0; i < contenu.size(); i++)
+		{
+			res += contenu + "\n";
+		}
+		return res;
+	}
+
+
+	public static void main(String[] args) throws IOException
+	{
+		FileListing list = null;
+		list = new FileListing();
+
+		list.setRepCourant(".");
+	}
+
 }
