@@ -88,8 +88,8 @@ public class GUI extends JFrame
 		getContentPane().add(btnHome);
 
 		scrollPane = new JScrollPane();
-		scrollPane.setSize(305, 205);
-		scrollPane.setLocation(155, 75);
+		scrollPane.setSize(439, 205);
+		scrollPane.setLocation(21, 75);
 		list = new JList(Model.getFileNames().toArray());
 		list.setBounds(155, 76, 319, 205);
 
@@ -158,10 +158,6 @@ public class GUI extends JFrame
 		comboBox_1.setBounds(245, 371, 137, 20);
 		getContentPane().add(comboBox_1);
 
-		JTree tree = new JTree();
-		tree.setBounds(21, 76, 124, 205);
-		getContentPane().add(tree);
-
 		JButton btnDelete = new JButton("Delete");
 		btnDelete.setBounds(312, 28, 63, 23);
 		btnDelete.addActionListener(new ActionListener()
@@ -175,14 +171,9 @@ public class GUI extends JFrame
 		});
 		getContentPane().add(btnDelete);
 
-		// JScrollPane scrollPane = new JScrollPane();
-		// scrollPane.setBounds(155, 76, 200, 50);
-		// getContentPane().add(scrollPane);
-		// this.pack();
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
-
 
 	public void rebuildList()
 	{
@@ -200,10 +191,17 @@ public class GUI extends JFrame
 
 		GUI.this.list.clearSelection();
 
-		GUI.this.scrollPane = new JScrollPane();
-		GUI.this.scrollPane.setSize(305, 205);
-		GUI.this.scrollPane.setLocation(155, 75);
+//		GUI.this.scrollPane = new JScrollPane();
+//		GUI.this.scrollPane.setSize(305, 205);
+//		GUI.this.scrollPane.setLocation(155, 75);
 
+		scrollPane = new JScrollPane();
+		scrollPane.setSize(439, 205);
+		scrollPane.setLocation(21, 75);
+//		list = new JList(Model.getFileNames().toArray());
+//		list.setBounds(155, 76, 319, 205);
+//
+//		
 		GUI.this.list = new JList(Model.getFileNames().toArray());
 		GUI.this.list.setBounds(155, 76, 319, 205);
 
