@@ -16,6 +16,7 @@ import javax.swing.JTree;
 
 import fr.miage.Model.Model;
 import fr.miage.fileListing.FileListing;
+import fr.miage.plugins.view.TestPluginView;
 
 
 public class GUI extends JFrame
@@ -48,7 +49,7 @@ public class GUI extends JFrame
 			}
 		});
 
-		newFile.setBounds(117, 28, 67, 23);
+		newFile.setBounds(105, 28, 67, 23);
 		getContentPane().add(newFile);
 
 		// remonter l'arborescence d'un cran
@@ -69,7 +70,7 @@ public class GUI extends JFrame
 			}
 		});
 
-		btnRemonter.setBounds(208, 28, 79, 23);
+		btnRemonter.setBounds(182, 28, 63, 23);
 		getContentPane().add(btnRemonter);
 
 		// retourner à c: ou au bureau, à définir
@@ -138,28 +139,8 @@ public class GUI extends JFrame
 		scrollPane.setViewportView(list);
 		getContentPane().add(scrollPane);
 
-		JLabel lblPlugins = new JLabel("Plugins de visualisation");
-		lblPlugins.setBounds(21, 323, 115, 14);
-		getContentPane().add(lblPlugins);
-
-		JLabel lblPluginsDanalyse = new JLabel("Plugins d'analyse");
-		lblPluginsDanalyse.setBounds(21, 374, 115, 14);
-		getContentPane().add(lblPluginsDanalyse);
-
-		// liste des plugins de visualisation disponible, qu'on chargera à
-		// l'aide d'un classLoader personnalisé
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(245, 320, 137, 20);
-		getContentPane().add(comboBox);
-
-		// liste des plugins d'analyse disponible, qu'on chargera à l'aide d'un
-		// classLoader personnalisé
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(245, 371, 137, 20);
-		getContentPane().add(comboBox_1);
-
 		JButton btnDelete = new JButton("Delete");
-		btnDelete.setBounds(312, 28, 63, 23);
+		btnDelete.setBounds(255, 28, 63, 23);
 		btnDelete.addActionListener(new ActionListener()
 		{
 
@@ -169,7 +150,27 @@ public class GUI extends JFrame
 				SuppressConfirmation delete = new SuppressConfirmation();
 			}
 		});
+		
 		getContentPane().add(btnDelete);
+		
+		JButton btnAddPlugin = new JButton("Add Plugin");
+		btnAddPlugin.setBounds(371, 28, 89, 23);
+		getContentPane().add(btnAddPlugin);
+		
+		JButton btnAppliquerPlugins = new JButton("Appliquer Plugins");
+		btnAppliquerPlugins.setBounds(182, 348, 130, 23);
+		btnAppliquerPlugins.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				TestPluginView testView = new TestPluginView();
+				testView.changerTaille(GUI.this);
+				testView.changerCouleur(GUI.this);
+				
+			}});
+		
+		getContentPane().add(btnAppliquerPlugins);
 
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -260,6 +261,7 @@ public class GUI extends JFrame
 	public static void main(String[] args)
 	{
 		GUI myGUI = new GUI();
+		
 
 	}
 }
