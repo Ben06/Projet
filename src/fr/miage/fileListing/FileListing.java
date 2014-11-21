@@ -32,12 +32,20 @@ public class FileListing
 	 */
 	File repCourant;
 
+	/**
+	 * separateur de fichier, permettra de savoir sur quel os on se trouve
+	 */
+	String separateur;
+	
+
 
 	// au démarrage, afficher le contenu du dossier courant (default)
 	public FileListing()
 	{
-		repCourant = new File(".");
 
+		repCourant = new File(".");
+		separateur = File.separator;
+		
 		File[] listFiles = repCourant.listFiles();
 		for (int i = 0; i < listFiles.length; i++)
 		{
@@ -165,7 +173,7 @@ public class FileListing
 		boolean result = false;
 		try
 		{
-			result = new File(model.getRepCourant().getCanonicalPath() + "\\" + name).mkdir();
+			result = new File(model.getRepCourant().getCanonicalPath() + separateur + name).mkdir();
 		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block
