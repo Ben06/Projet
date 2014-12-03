@@ -1,79 +1,126 @@
 package chargementDynamique;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
 import java.security.SecureClassLoader;
 import java.util.ArrayList;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-public class MyClassLoader extends SecureClassLoader {
-	private ArrayList<File> path = new ArrayList<File>();
+import fr.miage.Model.Model;
 
-	public MyClassLoader(File classPath) {
-		super();
-		addPath(classPath);
-	}
 
-	public void addPath(File classPath) {
-		if (!classPath.exists()) 
-			throw new IllegalArgumentException(classPath+" does not exist!");		
-		this.path.add(classPath);
-	}
+public class MyClassLoader extends SecureClassLoader
+{
+
+	public ArrayList<File> path = new ArrayList<File>();
+
 
 	@Override
-	protected Class<?> findClass(String name) throws ClassNotFoundException {
-		byte[] b = loadClassData(name);
+	protected Class<?> findClass(String name) throws ClassNotFoundException
+	{
+		byte[] b = null;
+		try
+		{
+			b = loadClassData(name);
+			// System.out.println(b.toString());
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return super.defineClass(name, b, 0, b.length);
 	}
 
-	private byte[] loadClassData(String name) throws ClassNotFoundException {
-		for(File dir : path) {
-			byte[] b = loadClassData(dir, name);
-			if (b != null) return b;
+
+	private byte[] loadClassData(String name) throws ClassNotFoundException, IOException
+	{
+
+		System.out.println("MyClassLoader.loadClassData() nom de la classe à charger : " + name);
+		String chemin = "";
+		if (Model.getOsName().contains("windows"))
+			chemin = name.replaceAll("\\.", "\\\\");
+		else
+			if(Model.getOsName().contains("nux")||Model.getOsName().contains("nix")||Model.getOsName().contains("aix"))
+				chemin = name.replaceAll("\\.", "/");
+
+		System.out.println("MyClassLoader.loadClassData() chemin après remplacement : " + chemin);
+
+		for (File f : path)
+		{
+
+			if (f.getName().endsWith(".zip"))
+			{
+				String fullchemin = chemin.concat(".class");
+				System.out.println("MyClassLoader.loadClassData() dans le zip");
+				MyZip mz = new MyZip();
+				byte[] b = mz.unzip(f, fullchemin);
+				if (b != null)
+					return b;
+			}
+
+			else if (f.getName().contains(".jar"))
+			{
+				String fullchemin = chemin.concat(".class");
+				System.out.println("MyClassLoader.loadClassData() dans le jar");
+				MyJar mj = new MyJar();
+				byte[] b = mj.readJar(f, fullchemin);
+				if (b != null)
+					return b;
+
+			}
+
+			else if (f.isDirectory())
+			{
+				System.out.println("MyClassLoader.loadClassData() dans le isDirectory()");
+				String fullchemin = chemin.concat(".class");
+				System.out.println("MyClassLoader.loadClassData() fullcheminn : " + fullchemin);
+				File[] listFiles = f.listFiles();
+				for (int i = 0; i < listFiles.length; i++)
+				{
+					String n = listFiles[i].getPath();
+					System.out.println("MyClassLoader.loadClassData() chemin avec le bin : " + n);
+					File file = new File(n);
+					if (n.equals(Model.getPluginToLoad().getPath()))
+					{
+						if (file.exists())
+						{
+							System.out.println("trouvé");
+							byte[] b = Files.readAllBytes(file.toPath());
+							if (b != null)
+								return b;
+						}
+					}
+				}
+			}
 		}
-		throw new ClassNotFoundException(name);
+		return null;
 	}
 
-	private byte[] loadClassData(File base, String name) {
-		System.out.println("load "+name+" in "+base);
-		name = name.replace('.', File.separatorChar)+".class";
 
-		try {
-			InputStream is = getFile(base, name);
-			if (is==null) return null;
+	public static void main(String[] args) throws ClassNotFoundException
+	{
+		MyClassLoader mClLoad = new MyClassLoader();
+		// File f = new File("/Users/deptinfo/Documents/TP");
+		// File[] listFiles = f.listFiles();
 
-			byte[] buf = new byte[is.available()];
-			is.read(buf);
-			return buf;
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new ExceptionInInitializerError("Error loading "+name+":"+e.getMessage());
-		}
-	}
+		mClLoad.path.add(new File("C:\\Users\\deptinfo\\Documents\\Systemes.jar"));
+		mClLoad.path.add(new File("C:\\Users\\deptinfo\\Documents\\Systemes.zip"));
+		mClLoad.path.add(new File("/Users/deptinfo/Documents/TP"));
 
-	private InputStream getFile(File base, String name) throws IOException {
-		if (base.isDirectory()) {
-			File f = new File(base, name);
-			if (f.exists()) 
-				return new FileInputStream(f);
-			else return null;
-		}
-		else {
-			ZipFile zipFile = null;
-			if (base.getName().endsWith(".jar"))
-				zipFile = new JarFile(base);		
-			else if (base.getName().endsWith(".zip"))
-				zipFile = new ZipFile(base);
-			else return null;
+		String className = "fr.miage.TP1.Client";
 
-			ZipEntry entry = zipFile.getEntry(name);
-			if (entry == null) return null;			
+		Class cl = mClLoad.loadClass(className);
 
-			return zipFile.getInputStream(entry);
-		}
+		// créer un jar contenant la classe et l'importer dans le projet
+		// JarFile jar = jar.
+		System.out.println(cl + " has been loaded by " + cl.getClassLoader());
+		// mClLoad.loadClass("TP1.ex1a.Filtre"); // NoClassDefFoundExeption, si
+		// class pas dans le même projet.
+		// try {*
+		// mClLoad.loadClassData("");
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 }

@@ -5,18 +5,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JTree;
 
 import fr.miage.Model.Model;
 import fr.miage.fileListing.FileListing;
-import fr.miage.plugins.view.TestPluginView;
 
 
 public class GUI extends JFrame
@@ -39,7 +38,7 @@ public class GUI extends JFrame
 		this.setSize(500, 500);
 		getContentPane().setLayout(null);
 
-		// créer un nouveau dossier, dans le repertoire courant
+		// créer un nouveau dossier, dans le repertoire courant de l'explorateur
 		JButton newFile = new JButton("New");
 		newFile.addActionListener(new ActionListener()
 		{
@@ -57,8 +56,6 @@ public class GUI extends JFrame
 		btnRemonter.addActionListener(new ActionListener()
 		{
 			CannotAccessErrorFrame error = null;
-
-
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
@@ -73,65 +70,61 @@ public class GUI extends JFrame
 		btnRemonter.setBounds(182, 28, 63, 23);
 		getContentPane().add(btnRemonter);
 
-		// retourner à c: ou au bureau, à définir
+		// retourner au repertoire d'origine (".")
 		JButton btnHome = new JButton("Home");
 		btnHome.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				listing.setRepCourant("C:\\Users\\deptinfo\\Documents\\GitHub\\ProjetProg\\Projet");
+				listing.setRepCourant(".");
 				rebuildList();
 			}
 		});
 
 		btnHome.setBounds(21, 28, 74, 23);
 		getContentPane().add(btnHome);
-
+		
+		// liste contenant le contenu du dossier courant
+		
 		scrollPane = new JScrollPane();
 		scrollPane.setSize(439, 205);
 		scrollPane.setLocation(21, 75);
 		list = new JList(Model.getFileNames().toArray());
 		list.setBounds(155, 76, 319, 205);
 
-		GUI.this.list.addMouseListener(new MouseAdapter()
+		GUI.this.list.addMouseListener(new MouseAdapter() 
 		{
 			public void mouseClicked(MouseEvent evt)
 			{
 				JList list = (JList) evt.getSource();
-				if (evt.getClickCount() == 1)
+				if (evt.getClickCount() == 1) // selection d'un élément, utilisé pour la suppresion de fichier
 				{
 					int index = list.locationToIndex(evt.getPoint());
 					GUI.this.model.setSelectedFile(GUI.this.model.getContenu(index));
 				}
-				if (evt.getClickCount() == 2)
+				if (evt.getClickCount() == 2) // double clic sur un élément, exploration de son contenu
 				{
 					int index = list.locationToIndex(evt.getPoint());
 					if (GUI.this.model.getContenu(index).isDirectory())
 					{
 						try
 						{
-							// System.out.println("GUI.GUI().new MouseAdapter() {...}.mouseClicked() avant le set rep");
 							CannotAccessErrorFrame error = null;
 							boolean result = listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
-							if (!result)
+							if (!result) // erreur, impossible d'accéder au dossier (dossier protégé / système)
 								error = new CannotAccessErrorFrame();
 							else
 								rebuildList();
 						} catch (IOException e)
 						{
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					} else
 					{
 						System.out.println("GUI.rebuildList().new MouseAdapter() {...}.mouseClicked() pas un repertoire!");
 					}
-				} else if (evt.getClickCount() == 3)
-				{ // Triple-click
-					int index = list.locationToIndex(evt.getPoint());
-
-				}
+				} 
 			}
 
 		});
@@ -139,6 +132,9 @@ public class GUI extends JFrame
 		scrollPane.setViewportView(list);
 		getContentPane().add(scrollPane);
 
+		/**
+		 * bouton de suppresion de fichier / dossier
+		 */
 		JButton btnDelete = new JButton("Delete");
 		btnDelete.setBounds(255, 28, 63, 23);
 		btnDelete.addActionListener(new ActionListener()
@@ -150,32 +146,91 @@ public class GUI extends JFrame
 				SuppressConfirmation delete = new SuppressConfirmation();
 			}
 		});
-		
+
 		getContentPane().add(btnDelete);
-		
+
+		/**
+		 * bouton d'ajout de plugin
+		 */
 		JButton btnAddPlugin = new JButton("Add Plugin");
 		btnAddPlugin.setBounds(371, 28, 89, 23);
-		getContentPane().add(btnAddPlugin);
-		
-		JButton btnAppliquerPlugins = new JButton("Appliquer Plugins");
-		btnAppliquerPlugins.setBounds(182, 348, 130, 23);
-		btnAppliquerPlugins.addActionListener(new ActionListener(){
+		btnAddPlugin.addActionListener(new ActionListener()
+		{
 
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				TestPluginView testView = new TestPluginView();
-				testView.changerTaille(GUI.this);
-				testView.changerCouleur(GUI.this);
-				
-			}});
-		
+				SelectPluginFrame plugins = new SelectPluginFrame();
+			}
+		});
+		getContentPane().add(btnAddPlugin);
+
+		/**
+		 * bouton permettant d'executer les plugins choisis
+		 */
+		JButton btnAppliquerPlugins = new JButton("Appliquer Plugins");
+		btnAppliquerPlugins.setBounds(182, 348, 130, 23);
+		btnAppliquerPlugins.addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				executePlugins();
+			}
+		});
+
 		getContentPane().add(btnAppliquerPlugins);
 
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
+	/**
+	 * methode invoquant les différentes methodes des plugins
+	 * permet d'appliquer les plugins sélectionnés par l'utilisateur
+	 */
+	public void executePlugins()
+	{
+		Method[] methods = Model.getViewPlugin().getMethods();
+		for (int i = 0; i < methods.length; i++)
+		{
+			try
+			{
+				Object obj = Model.getPlugin().newInstance();
+				
+				System.out.println(methods[i].getName());
+				if (methods[i].getName().equals("changerCouleur"))
+				{
+					methods[i].invoke(obj, GUI.this);
+				}
+				
+			} catch (InstantiationException e2)
+			{
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			} catch (IllegalAccessException e2)
+			{
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			} catch (IllegalArgumentException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		}
+	}
+	
+	/**
+	 * reconstruit la liste contenant le contenu du dossier exploré
+	 * afin de reconstruire la liste, on en crée une autre identique
+	 * avec les nouvelles valeurs
+	 */
 	public void rebuildList()
 	{
 		Model.setRepCourant(listing.getRepCourant());
@@ -192,17 +247,17 @@ public class GUI extends JFrame
 
 		GUI.this.list.clearSelection();
 
-//		GUI.this.scrollPane = new JScrollPane();
-//		GUI.this.scrollPane.setSize(305, 205);
-//		GUI.this.scrollPane.setLocation(155, 75);
+		// GUI.this.scrollPane = new JScrollPane();
+		// GUI.this.scrollPane.setSize(305, 205);
+		// GUI.this.scrollPane.setLocation(155, 75);
 
 		scrollPane = new JScrollPane();
 		scrollPane.setSize(439, 205);
 		scrollPane.setLocation(21, 75);
-//		list = new JList(Model.getFileNames().toArray());
-//		list.setBounds(155, 76, 319, 205);
-//
-//		
+		// list = new JList(Model.getFileNames().toArray());
+		// list.setBounds(155, 76, 319, 205);
+		//
+		//
 		GUI.this.list = new JList(Model.getFileNames().toArray());
 		GUI.this.list.setBounds(155, 76, 319, 205);
 
@@ -261,7 +316,6 @@ public class GUI extends JFrame
 	public static void main(String[] args)
 	{
 		GUI myGUI = new GUI();
-		
 
 	}
 }

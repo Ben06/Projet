@@ -2,6 +2,7 @@ package fr.miage.plugins.analyse;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JList;
 
 public interface IPluginView
 {
@@ -9,5 +10,6 @@ public interface IPluginView
 	public void changerCouleur(JFrame f);
 	public void changerFormeBoutons(JFrame f);
 	public void ajouterElement(JFrame f, JComponent component);
+	public void customList(JFrame f, JList list);
 	
 }

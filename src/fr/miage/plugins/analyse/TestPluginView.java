@@ -1,11 +1,11 @@
-package fr.miage.plugins.view;
+package fr.miage.plugins.analyse;
 
 import java.awt.Color;
+import java.awt.Component;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-
-import fr.miage.plugins.analyse.IPluginView;
+import javax.swing.JList;
 
 public class TestPluginView implements IPluginView
 {
@@ -13,7 +13,7 @@ public class TestPluginView implements IPluginView
 	@Override
 	public void changerTaille(JFrame f)
 	{
-		
+		f.setSize(1000, 1000);
 	}
 
 	@Override
@@ -27,13 +27,18 @@ public class TestPluginView implements IPluginView
 	@Override
 	public void changerFormeBoutons(JFrame f)
 	{
-		
+		Component[] components = f.getComponents();
 	}
 
 	@Override
 	public void ajouterElement(JFrame f, JComponent component)
 	{
-		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void customList(JFrame f, JList list)
+	{
 		
 	}
 

@@ -33,10 +33,9 @@ public class FileListing
 	File repCourant;
 
 	/**
-	 * separateur de fichier, permettra de savoir sur quel os on se trouve
+	 * nom de l'os
 	 */
-	String separateur;
-	
+	String osName;
 
 
 	// au démarrage, afficher le contenu du dossier courant (default)
@@ -44,8 +43,7 @@ public class FileListing
 	{
 
 		repCourant = new File(".");
-		separateur = File.separator;
-		
+		osName = System.getProperty("os.name").toLowerCase();
 		File[] listFiles = repCourant.listFiles();
 		for (int i = 0; i < listFiles.length; i++)
 		{
@@ -120,12 +118,10 @@ public class FileListing
 	{
 		try
 		{
-			if (repCourant.getCanonicalPath().endsWith(":"))
+			String currentPath = repCourant.getCanonicalPath();
+			System.out.println("FileListing.remonter() " + System.getProperty("os.name"));
+			if (osName.contains("windows"))
 			{
-				System.out.println("FileListing.remonter() impossible de remonter plus, repertoire courant = root");
-			} else
-			{
-				String currentPath = repCourant.getCanonicalPath();
 				String[] folders = currentPath.split("\\\\");
 				String upPath = "";
 				for (int i = 0; i < folders.length - 1; i++)
@@ -134,6 +130,35 @@ public class FileListing
 						upPath += folders[i];
 					else
 						upPath += folders[i] + "\\";
+				}
+				System.out.println("------------------------------- \n FileListing.remonter() " + upPath);
+				setRepCourant(upPath);
+				System.out.println("FileListing.remonter() après le setRepCourant : " + repCourant.getCanonicalPath());
+				File[] listFiles = repCourant.listFiles();
+				contenu.clear();
+				fileNames.clear();
+				if (listFiles != null)
+				{
+					for (int i = 0; i < listFiles.length; i++)
+					{
+						// System.out.println("FileListing.remonter() "+listFiles[i]);
+						contenu.add(listFiles[i]);
+						fileNames.add(listFiles[i].getName());
+					}
+					return true;
+				} else
+					return false;
+			}
+			if(osName.contains("nux") || osName.contains("nux") || osName.contains("aix"))
+			{
+				String[] folders = currentPath.split("/");
+				String upPath = "";
+				for (int i = 0; i < folders.length - 1; i++)
+				{
+					if (i == folders.length - 2)
+						upPath += folders[i];
+					else
+						upPath += folders[i] + "/";
 				}
 				System.out.println("------------------------------- \n FileListing.remonter() " + upPath);
 				setRepCourant(upPath);
@@ -173,7 +198,14 @@ public class FileListing
 		boolean result = false;
 		try
 		{
-			result = new File(model.getRepCourant().getCanonicalPath() + separateur + name).mkdir();
+			if(osName.contains("nux") || osName.contains("nux") || osName.contains("aix"))
+			{
+				result = new File(model.getRepCourant().getCanonicalPath() + "/" + name).mkdir();
+			}
+			if(osName.contains("windows"))
+			{
+				result = new File(model.getRepCourant().getCanonicalPath() + "\\" + name).mkdir();
+			}
 		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block

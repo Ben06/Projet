@@ -1,66 +1,92 @@
 package chargementDynamique;
 
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Repository<T> {
-	private File base;
-	private MyClassLoader classLoader;
-	private Class<T> superClass;
-	
-	public Repository(File base, Class<T> superClass) {
-		this.base = base;
-		this.classLoader = new MyClassLoader(base);
-		this.superClass = superClass;
-		
+public class Repository {
+
+	/**
+	 * dossier dans lequel la recherche va s'effectuer
+	 */
+	public File base;
+
+	/**
+	 * liste des fichiers .class
+	 */
+	private List<String> listClassNames = new ArrayList<>();
+
+	public Repository(File base) {
+		if (base.isDirectory())
+			this.base = base;
+		else
+			System.out.println("Pas un dossier");
 	}
-	
-	public List<Class<? extends T>> load() {
-		ArrayList<Class<? extends T>> list = new ArrayList<Class<? extends T>>();
-		load(base, list, "");
-		return list;
-	}
-	
-	private void load(File b, List<Class<? extends T>> list, String name){
-		File[] children = b.listFiles(new FileFilter() {
-			
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.isDirectory() || 
-						pathname.getName().endsWith(".class") ||
-						pathname.getName().endsWith(".jar");
-			}
-		});
-		
-//		System.out.println("base:"+b);
-		for(File child:children) { 
-//			System.out.println(child);
-			if (child.isDirectory()) load(child, list, name+child.getName()+".");
-			else if (child.getName().endsWith(".class")) {
-				String childName = child.getName().substring(0, child.getName().length()-6); // remove .class
-				try {
-					Class<?> cl = classLoader.loadClass(name+childName);
-					if (superClass.isAssignableFrom(cl))
-						list.add(cl.asSubclass(superClass));
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+
+	public List<String> parcours(File base) {
+		File[] listFiles = base.listFiles();
+		for (int i = 0; i < listFiles.length; i++) {
+			// System.out.println("Repository.parcours() listFiles[i].getName() : "+listFiles[i].getName());
+			if (listFiles[i].isDirectory()) {
+				// System.out.println("Repository.parcours() dans le if");
+				parcours(listFiles[i]);
+			} else if (listFiles[i].getName().endsWith(".class")) {
+				String className  = listFiles[i].getPath().substring(this.base.getPath().length());
+				String canonicalClassName = className.substring(1);
+				String goodClassName = canonicalClassName.replaceAll("\\\\", "\\.");
+				String finalClassName = goodClassName.substring(0, goodClassName.length()-6); // on enleve le .class
+//				System.out.println("Repository.parcours() " +finalClassName);
+				if (finalClassName.contains("bin"))
+				{
+					int ind = finalClassName.indexOf("bin");
+//					System.out.println("Repository.parcours() "+ind);
+					String withoutBin = finalClassName.substring(ind+4);
+//					System.out.println("Repository.parcours() "+withoutBin);
+					listClassNames.add(withoutBin);
 				}
+				else
+					listClassNames.add(finalClassName);
 			}
-				
 		}
+		// System.out.println("Repository.parcours() : listClassFiles.size() : "+listClassFiles.size());
+		return listClassNames;
 	}
-	
-	public static void main(String[] args) {
-		File f = new File("d:/workspace/MenuAction/bin");
-		if (!f.exists()) {
-			System.err.println(f+" does not exist");
-			System.exit(1);
+
+	public List<Class<?>> load() {
+		List<Class<?>> listClass = new ArrayList<Class<?>>();
+		MyClassLoader mcl = new MyClassLoader();
+		mcl.path.add(base);
+		int i = 0;
+		for (String name : listClassNames) {
+			try {
+//				System.out.println("Repository.load() ajout de la classe : "+name );
+				Class cl = mcl.loadClass(name); // bug car mauvais nom de package, il faut enlever le "\\bin\\" et tout ce qu'il se trouve avant
+				System.out.println("Repository.load() classe ajoutée : "+cl.toString() +" par le classLoader : "+cl.getClassLoader());
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		Repository<ActionListener> rep = new Repository<ActionListener>(f, ActionListener.class);
-		List<Class<? extends ActionListener>> l = rep.load();
-		System.out.println(l.size()+" classe(s) loaded");
+		return listClass;
+	}
+
+	public void afficheList(List<?> list) {
+
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println("Element " + i + " de la liste : " + list.get(i));
+		}
+
+	}
+
+	public static void main(String[] args) {
+
+		File base = new File("/Users/deptinfo/Documents/TP");
+		Repository repo = new Repository(base);
+		List<String> list = repo.parcours(base);
+		// repo.afficheList(list);
+		List<Class<?>> listClass = repo.load();
+
 	}
 }
