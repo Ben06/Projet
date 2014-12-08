@@ -1,4 +1,4 @@
-package fr.miage.plugins.analyse;
+package fr.miage.plugins.view;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -31,13 +31,13 @@ public class TestPluginView implements IPluginView
 	}
 
 	@Override
-	public void ajouterElement(JFrame f, JComponent component)
+	public void ajouterElement(JFrame f)
 	{
 		
 	}
 
 	@Override
-	public void customList(JFrame f, JList list)
+	public void customList(JFrame f)
 	{
 		
 	}

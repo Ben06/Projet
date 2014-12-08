@@ -16,7 +16,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-public class MyZip {
+
+public class MyZip
+{
 
 	/**
 	 * décompresse le fichier zip dans le répertoire donné
@@ -28,46 +30,111 @@ public class MyZip {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static byte[] unzip(File zipfile, String name)
-			throws FileNotFoundException, IOException {
+	public static byte[] unzip(File zipfile, String name) throws FileNotFoundException, IOException
+	{
 
-		// création de la ZipInputStream qui va servir à lire les données du
-		// fichier zip
-//		System.out.println("MyZip.unzip() "+zipfile.getPath());
 		ZipFile zip = new ZipFile(zipfile.getPath());
-		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(
-				new FileInputStream(zipfile.getCanonicalFile())));
+		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipfile.getCanonicalFile())));
 
 		// extractions des entrées du fichiers zip (i.e. le contenu du zip)
 		ZipEntry ze = null;
-		try {
-			while ((ze = zis.getNextEntry()) != null) {
+		try
+		{
+			while ((ze = zis.getNextEntry()) != null)
+			{
 				// Pour chaque entrée, on crée un fichier
 				// dans le répertoire de sortie "folder"
 				File f = new File(ze.getName());
-				
-				String chemin = name.replaceAll("\\.","\\\\");
-				if(f.getPath().endsWith(".class")) // à modif par la suite
+
+//				String chemin = name.replaceAll("\\.", "\\\\");
+				if (f.getPath().endsWith(".class")) // à modif par la suite
 				{
 					// modifier le chemin avant
-					
-					if (f.getPath().contains(chemin))
-//					if(f.getPath().equals(anObject))) à modifier par la suite
+
+					if (f.getPath().contains(name))
+					// if(f.getPath().equals(anObject))) à modifier par la suite
 					{
-						System.out.println("MyZip.unzip() trouvé "+f.getPath());
+						System.out.println("MyZip.unzip() trouvé " + f.getCanonicalPath());
 						InputStream in = zip.getInputStream(ze);
 						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//						byte[] buf = new byte[1024];
 						int b;
-						while((b = in.read())!=-1){
+						while ((b = in.read()) != -1)
+						{
 							baos.write(b);
-//							baos.write(buf, 0, b);
 						}
 						return baos.toByteArray();
 					}
 				}
-				
-		}} finally {
+
+			}
+		} finally
+		{
+			// fermeture de la ZipInputStream
+			zis.close();
+		}
+		return null;
+	}
+
+
+	public static String unzipGetPackage(File zipfile, String name) throws FileNotFoundException, IOException
+	{
+
+		ZipFile zip = new ZipFile(zipfile.getPath());
+		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipfile.getCanonicalFile())));
+
+		// extractions des entrées du fichiers zip (i.e. le contenu du zip)
+		ZipEntry ze = null;
+		try
+		{
+			while ((ze = zis.getNextEntry()) != null)
+			{
+				// Pour chaque entrée, on crée un fichier
+				// dans le répertoire de sortie "folder"
+				File f = new File(ze.getName());
+				if (f.getPath().endsWith(".class")) // à modif par la suite
+				{
+					// modifier le chemin avant
+					String packageName = "";
+					String fname = f.getName();
+					if (fname.contains(name))
+					// if(f.getPath().equals(anObject))) à modifier par la suite
+					{
+						System.out.println("MyZip.unzip() trouvé " + f.getCanonicalPath());
+						packageName = f.getParentFile().getCanonicalPath();
+						int pos = fname.lastIndexOf(".");
+						if (pos > 0)
+						{ // on enlève le .class du nom du plugin à charger
+//							System.out.println("MyZip.unzipGetPackage() on enlève le .class");
+							fname = fname.substring(0, pos);
+//							System.out.println("MyZip.unzipGetPackage() fname "+fname);
+						}
+
+						if (f.getParentFile().getCanonicalPath().contains("\\bin\\"))
+						{
+//							System.out.println("MyZip.unzipGetPackage() "+f.getParentFile().getCanonicalPath());
+							int binIndex = f.getParentFile().getCanonicalPath().indexOf("\\bin\\");
+							if (binIndex > 0)
+							{
+//								System.out.println("MyZip.unzipGetPackage() packageName : "+packageName);
+//								System.out.println("MyZip.unzipGetPackage() binIndex "+binIndex);
+								packageName = packageName.substring(binIndex+5);
+								packageName = packageName.replaceAll("\\\\", "\\.");
+//								System.out.println("MyZip.unzip() packageName " + packageName);
+//								System.out.println("MyZip.unzipGetPackage() className : " + packageName +"."+fname);
+								return packageName +"."+fname;
+							}
+
+						} else if (f.getParentFile().getCanonicalPath().contains("\\bin"))
+						{
+							System.out.println("MyZip.unzip() pas de package");
+							return fname;
+						}
+					}
+				}
+
+			}
+		} finally
+		{
 			// fermeture de la ZipInputStream
 			zis.close();
 		}

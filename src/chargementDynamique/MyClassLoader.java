@@ -80,7 +80,7 @@ public class MyClassLoader extends SecureClassLoader
 					String n = listFiles[i].getPath();
 					System.out.println("MyClassLoader.loadClassData() chemin avec le bin : " + n);
 					File file = new File(n);
-					if (n.equals(Model.getPluginToLoad().getPath()))
+					if (n.contains(fullchemin))
 					{
 						if (file.exists())
 						{

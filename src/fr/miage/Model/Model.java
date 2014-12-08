@@ -3,7 +3,9 @@ package fr.miage.Model;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Model
@@ -30,25 +32,89 @@ public class Model
 	private static File pluginToLoad;
 
 	private static String pluginToLoadStr;
+	
+	/**
+	 * liste des plugins de vue
+	 */
+	private static Map<String, Class> viewPlugins = new HashMap<String, Class>();
+	
+	/**
+	 * liste des plugins d'analyse
+	 */
+	private static List<Class> analysisPlugins = new ArrayList<Class>();
 
+	
+	/**
+	 * le plugin de vue sélectionné dans la liste déroulante
+	 */
 	private static Class viewPlugin;
 
+	/**
+	 * le pluginn d'analyse séléctionné dans la liste déroulante
+	 */
 	private static Class analysisPlugin;
-
+	
+	/**
+	 * plugin à charger, ajouté via le bouton AddPlugin du GUI
+	 */
 	private static Class plugin;
 
 	private static String osName = System.getProperty("os.name").toLowerCase();
 
+	
+	public static String[] viewPluginsNameToArray()
+	{
+		String[] viewPluginsNames = new String[viewPlugins.size()];
+		int i = 0;
+		for (String key : viewPlugins.keySet())
+		{
+			viewPluginsNames[i] = key;
+			i++;
+		}
+		return viewPluginsNames;
+	}
+	
+	
+	public static String[] analysisPluginsNameToArray()
+	{
+		String[] analysisPluginsNames = new String[analysisPlugins.size()]; 
+		for (int i = 0; i<analysisPlugins.size(); i++)
+		{
+			analysisPluginsNames[i] = analysisPlugins.get(i).getName();
+		}
+		return analysisPluginsNames;
+	}
+	
+	public static Class getViewPlugin(String name)
+	{
+		return viewPlugins.get(name);
+	}
+	
+	public static Class getAnalysisPlugin(int index)
+	{
+		return analysisPlugins.get(index);
+	}
 
+	public static void addViewPlugin(Class cl)
+	{
+		viewPlugins.put(cl.getName(), cl);
+	}
+	
+	public static void addAnalysisPlugin(Class cl)
+	{
+		analysisPlugins.add(cl);
+	}
 	public static Class getPlugin()
 	{
 		return plugin;
 	}
 
+
 	public static String getOsName()
 	{
 		return osName;
 	}
+
 
 	public static void setPlugin(Class plugin)
 	{
@@ -80,6 +146,22 @@ public class Model
 	}
 
 
+	public static boolean isWindows()
+	{
+		if (Model.osName.contains("win"))
+			return true;
+		else
+			return false;
+	}
+
+	public static boolean isUnix()
+	{
+		if(Model.osName.contains("nux") || Model.osName.contains("nix") || Model.osName.contains("aix"))
+			return true;
+		else
+			return false;
+	}
+
 	public static String getPluginToLoadStr()
 	{
 
@@ -98,14 +180,15 @@ public class Model
 			System.out.println("Model.getPluginToLoadStr() " + classname);
 			if (osName.contains("windows"))
 			{
-				if (classname.contains("\\bin\\"))
+				if (classname.contains("Plugins"))
 				{
-					System.out.println("Model.getPluginToLoadStr() dans le if");
-					int posBin = classname.lastIndexOf("\\bin\\");
-					System.out.println("Model.getPluginToLoadStr() " + posBin);
+					// System.out.println("Model.getPluginToLoadStr() dans le if");
+					int posBin = classname.lastIndexOf("Plugins");
+					// System.out.println("Model.getPluginToLoadStr() " +
+					// posBin);
 					if (posBin > 0)
 					{
-						classname = classname.substring(posBin + 5);
+						classname = classname.substring(posBin + 8);
 						System.out.println("Model.getPluginToLoadStr() " + classname);
 						classname = classname.replaceAll("\\\\", "\\.");
 						System.out.println("Model.getPluginToLoadStr() " + classname);
@@ -129,14 +212,14 @@ public class Model
 				System.out.println("Model.getPluginToLoadStr() " + classname);
 				if (osName.contains("windows"))
 				{
-					if (classname.contains("/bin/"))
+					if (classname.contains("Plugins"))
 					{
 						System.out.println("Model.getPluginToLoadStr() dans le if");
-						int posBin = classname.lastIndexOf("/bin/");
+						int posBin = classname.lastIndexOf("Plugins");
 						System.out.println("Model.getPluginToLoadStr() " + posBin);
 						if (posBin > 0)
 						{
-							classname = classname.substring(posBin + 5);
+							classname = classname.substring(posBin + 8);
 							System.out.println("Model.getPluginToLoadStr() " + classname);
 							classname = classname.replaceAll("/", "\\.");
 							System.out.println("Model.getPluginToLoadStr() " + classname);

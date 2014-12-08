@@ -1,4 +1,4 @@
-package fr.miage.plugins.view;
+package fr.miage.plugins.analyse;
 
 public interface IPluginAnalyse
 {

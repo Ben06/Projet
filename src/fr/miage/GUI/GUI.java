@@ -1,19 +1,23 @@
 package fr.miage.GUI;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 
+import chargementDynamique.RepositoryLoader;
 import fr.miage.Model.Model;
 import fr.miage.fileListing.FileListing;
 
@@ -25,10 +29,12 @@ public class GUI extends JFrame
 	Model model = new Model();
 	JList list;
 	JScrollPane scrollPane;
+	RepositoryLoader repo = new RepositoryLoader();
 
 
 	GUI()
 	{
+		repo.parcours(new File("C:\\Users\\deptinfo\\Documents\\Plugins"));
 		listing = new FileListing();
 		model.setRepCourant(listing.getRepCourant());
 		model.setContenu(listing.getContenu());
@@ -40,6 +46,7 @@ public class GUI extends JFrame
 
 		// créer un nouveau dossier, dans le repertoire courant de l'explorateur
 		JButton newFile = new JButton("New");
+		newFile.setName("newFile");
 		newFile.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent arg0)
@@ -53,6 +60,7 @@ public class GUI extends JFrame
 
 		// remonter l'arborescence d'un cran
 		JButton btnRemonter = new JButton("UP");
+		btnRemonter.setName("btnRemonter");
 		btnRemonter.addActionListener(new ActionListener()
 		{
 			CannotAccessErrorFrame error = null;
@@ -72,6 +80,7 @@ public class GUI extends JFrame
 
 		// retourner au repertoire d'origine (".")
 		JButton btnHome = new JButton("Home");
+		btnHome.setName("btnHome");
 		btnHome.addActionListener(new ActionListener()
 		{
 			@Override
@@ -88,9 +97,11 @@ public class GUI extends JFrame
 		// liste contenant le contenu du dossier courant
 		
 		scrollPane = new JScrollPane();
+		scrollPane.setName("scrollPane");
 		scrollPane.setSize(439, 205);
 		scrollPane.setLocation(21, 75);
 		list = new JList(Model.getFileNames().toArray());
+		list.setName("list");
 		list.setBounds(155, 76, 319, 205);
 
 		GUI.this.list.addMouseListener(new MouseAdapter() 
@@ -136,6 +147,7 @@ public class GUI extends JFrame
 		 * bouton de suppresion de fichier / dossier
 		 */
 		JButton btnDelete = new JButton("Delete");
+		btnDelete.setName("btnDelete");
 		btnDelete.setBounds(255, 28, 63, 23);
 		btnDelete.addActionListener(new ActionListener()
 		{
@@ -153,6 +165,7 @@ public class GUI extends JFrame
 		 * bouton d'ajout de plugin
 		 */
 		JButton btnAddPlugin = new JButton("Add Plugin");
+		btnAddPlugin.setName("btnAddPlugin");
 		btnAddPlugin.setBounds(371, 28, 89, 23);
 		btnAddPlugin.addActionListener(new ActionListener()
 		{
@@ -169,7 +182,8 @@ public class GUI extends JFrame
 		 * bouton permettant d'executer les plugins choisis
 		 */
 		JButton btnAppliquerPlugins = new JButton("Appliquer Plugins");
-		btnAppliquerPlugins.setBounds(182, 348, 130, 23);
+		btnAppliquerPlugins.setName("btnAppliquerPlugins");
+		btnAppliquerPlugins.setBounds(182, 428, 130, 23);
 		btnAppliquerPlugins.addActionListener(new ActionListener()
 		{
 
@@ -181,6 +195,58 @@ public class GUI extends JFrame
 		});
 
 		getContentPane().add(btnAppliquerPlugins);
+		
+		/**
+		 * liste déroulante contenant les différents plugins de vue présents dans le répertoire plugins
+		 */
+		JComboBox viewPlugins;
+		if(Model.viewPluginsNameToArray()!=null)
+		{
+			viewPlugins = new JComboBox(Model.viewPluginsNameToArray());
+		}
+		else
+		{
+			viewPlugins = new JComboBox();
+		}
+		viewPlugins.setName("viewPlugins");
+		viewPlugins.setBounds(170, 306, 148, 20);
+		viewPlugins.addActionListener(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				String selected = viewPlugins.getSelectedItem().toString();
+				Model.setViewPlugin(Model.getViewPlugin(selected));
+			}
+		});
+		getContentPane().add(viewPlugins);
+		
+		/**
+		 * liste déroulante contenant les différents plugins d'analyse présents dans le répertoire de plugins
+		 */
+		JComboBox analysisPlugins;
+		if(Model.analysisPluginsNameToArray()!=null)
+		{
+			analysisPlugins = new JComboBox(Model.analysisPluginsNameToArray());
+		}
+		else
+		{
+			analysisPlugins = new JComboBox();
+		}
+		analysisPlugins.setBounds(170, 346, 148, 20);
+		analysisPlugins.setName("analysisPlugins");
+		getContentPane().add(analysisPlugins);
+		
+		JLabel lblPluginsDeVue = new JLabel("Plugins de vue");
+		lblPluginsDeVue.setBounds(21, 309, 151, 14);
+		lblPluginsDeVue.setName("lblPluginsDeVue");
+		getContentPane().add(lblPluginsDeVue);
+		
+		JLabel lblPluginsDanalyse = new JLabel("Plugins d'analyse");
+		lblPluginsDanalyse.setBounds(21, 349, 121, 14);
+		lblPluginsDanalyse.setName("lblPluginsDanalyse");
+		getContentPane().add(lblPluginsDanalyse);
 
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -197,14 +263,29 @@ public class GUI extends JFrame
 		{
 			try
 			{
-				Object obj = Model.getPlugin().newInstance();
+				Object obj = Model.getViewPlugin().newInstance();
 				
 				System.out.println(methods[i].getName());
 				if (methods[i].getName().equals("changerCouleur"))
 				{
 					methods[i].invoke(obj, GUI.this);
 				}
-				
+				if(methods[i].getName().equals("changerTaille"))
+				{
+					methods[i].invoke(obj, GUI.this);
+				}
+				if(methods[i].getName().equals("changerFormeBoutons"))
+				{
+					methods[i].invoke(obj, GUI.this);
+				}
+				if(methods[i].getName().equals("ajouterElement"))
+				{
+					methods[i].invoke(obj, GUI.this);
+				}
+				if(methods[i].getName().equals("customList"))
+				{
+					methods[i].invoke(obj, GUI.this);
+				}
 			} catch (InstantiationException e2)
 			{
 				// TODO Auto-generated catch block
@@ -252,6 +333,7 @@ public class GUI extends JFrame
 		// GUI.this.scrollPane.setLocation(155, 75);
 
 		scrollPane = new JScrollPane();
+		scrollPane.setName("scrollPane");
 		scrollPane.setSize(439, 205);
 		scrollPane.setLocation(21, 75);
 		// list = new JList(Model.getFileNames().toArray());
@@ -260,7 +342,7 @@ public class GUI extends JFrame
 		//
 		GUI.this.list = new JList(Model.getFileNames().toArray());
 		GUI.this.list.setBounds(155, 76, 319, 205);
-
+		GUI.this.list.setName("list");
 		GUI.this.list.addMouseListener(new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent evt)
@@ -316,6 +398,10 @@ public class GUI extends JFrame
 	public static void main(String[] args)
 	{
 		GUI myGUI = new GUI();
-
+		Component[] comp = myGUI.getContentPane().getComponents();
+		for (int i = 0; i<comp.length; i++)
+		{
+			System.out.println("GUI.main() "+comp[i].getName());
+		}
 	}
 }
