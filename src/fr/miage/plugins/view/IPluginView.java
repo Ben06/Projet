@@ -4,6 +4,8 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JList;
 
+import fr.miage.GUI.GUI;
+
 public interface IPluginView
 {
 	public void changerTaille(JFrame f);

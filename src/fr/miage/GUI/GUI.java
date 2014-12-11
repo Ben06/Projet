@@ -27,18 +27,36 @@ public class GUI extends JFrame
 
 	FileListing listing;
 	Model model = new Model();
-	JList list;
+	private JList list;
 	JScrollPane scrollPane;
 	RepositoryLoader repo = new RepositoryLoader();
-
-
+	
 	GUI()
 	{
-		repo.parcours(new File("C:\\Users\\deptinfo\\Documents\\Plugins"));
 		listing = new FileListing();
 		model.setRepCourant(listing.getRepCourant());
 		model.setContenu(listing.getContenu());
 		model.setFileNames(listing.getFileNames());
+
+		try
+		{
+			if (Model.isWindows())
+				repo.parcours(new File("C:\\Plugins"));
+			else
+				repo.parcours(new File("/Plugins"));
+		} catch (NullPointerException npe)
+		{
+			if (Model.isWindows())
+			{
+				new File("C:\\Plugins").mkdir();
+				repo.parcours(new File("C:\\Plugins"));
+			}
+			else
+			{
+				new File("/Plugins").mkdir();
+				repo.parcours(new File("/Plugins"));
+			}
+		}
 
 		this.setTitle("Explorateur");
 		this.setSize(500, 500);
@@ -64,6 +82,8 @@ public class GUI extends JFrame
 		btnRemonter.addActionListener(new ActionListener()
 		{
 			CannotAccessErrorFrame error = null;
+
+
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
@@ -93,9 +113,9 @@ public class GUI extends JFrame
 
 		btnHome.setBounds(21, 28, 74, 23);
 		getContentPane().add(btnHome);
-		
+
 		// liste contenant le contenu du dossier courant
-		
+
 		scrollPane = new JScrollPane();
 		scrollPane.setName("scrollPane");
 		scrollPane.setSize(439, 205);
@@ -104,17 +124,19 @@ public class GUI extends JFrame
 		list.setName("list");
 		list.setBounds(155, 76, 319, 205);
 
-		GUI.this.list.addMouseListener(new MouseAdapter() 
+		GUI.this.list.addMouseListener(new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent evt)
 			{
 				JList list = (JList) evt.getSource();
-				if (evt.getClickCount() == 1) // selection d'un élément, utilisé pour la suppresion de fichier
+				if (evt.getClickCount() == 1) // selection d'un élément, utilisé
+												// pour la suppresion de fichier
 				{
 					int index = list.locationToIndex(evt.getPoint());
 					GUI.this.model.setSelectedFile(GUI.this.model.getContenu(index));
 				}
-				if (evt.getClickCount() == 2) // double clic sur un élément, exploration de son contenu
+				if (evt.getClickCount() == 2) // double clic sur un élément,
+												// exploration de son contenu
 				{
 					int index = list.locationToIndex(evt.getPoint());
 					if (GUI.this.model.getContenu(index).isDirectory())
@@ -123,7 +145,9 @@ public class GUI extends JFrame
 						{
 							CannotAccessErrorFrame error = null;
 							boolean result = listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
-							if (!result) // erreur, impossible d'accéder au dossier (dossier protégé / système)
+							if (!result) // erreur, impossible d'accéder au
+											// dossier (dossier protégé /
+											// système)
 								error = new CannotAccessErrorFrame();
 							else
 								rebuildList();
@@ -135,7 +159,7 @@ public class GUI extends JFrame
 					{
 						System.out.println("GUI.rebuildList().new MouseAdapter() {...}.mouseClicked() pas un repertoire!");
 					}
-				} 
+				}
 			}
 
 		});
@@ -195,16 +219,16 @@ public class GUI extends JFrame
 		});
 
 		getContentPane().add(btnAppliquerPlugins);
-		
+
 		/**
-		 * liste déroulante contenant les différents plugins de vue présents dans le répertoire plugins
+		 * liste déroulante contenant les différents plugins de vue présents
+		 * dans le répertoire plugins
 		 */
 		JComboBox viewPlugins;
-		if(Model.viewPluginsNameToArray()!=null)
+		if (Model.viewPluginsNameToArray() != null)
 		{
 			viewPlugins = new JComboBox(Model.viewPluginsNameToArray());
-		}
-		else
+		} else
 		{
 			viewPlugins = new JComboBox();
 		}
@@ -212,7 +236,7 @@ public class GUI extends JFrame
 		viewPlugins.setBounds(170, 306, 148, 20);
 		viewPlugins.addActionListener(new ActionListener()
 		{
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
@@ -221,28 +245,28 @@ public class GUI extends JFrame
 			}
 		});
 		getContentPane().add(viewPlugins);
-		
+
 		/**
-		 * liste déroulante contenant les différents plugins d'analyse présents dans le répertoire de plugins
+		 * liste déroulante contenant les différents plugins d'analyse présents
+		 * dans le répertoire de plugins
 		 */
 		JComboBox analysisPlugins;
-		if(Model.analysisPluginsNameToArray()!=null)
+		if (Model.analysisPluginsNameToArray() != null)
 		{
 			analysisPlugins = new JComboBox(Model.analysisPluginsNameToArray());
-		}
-		else
+		} else
 		{
 			analysisPlugins = new JComboBox();
 		}
 		analysisPlugins.setBounds(170, 346, 148, 20);
 		analysisPlugins.setName("analysisPlugins");
 		getContentPane().add(analysisPlugins);
-		
+
 		JLabel lblPluginsDeVue = new JLabel("Plugins de vue");
 		lblPluginsDeVue.setBounds(21, 309, 151, 14);
 		lblPluginsDeVue.setName("lblPluginsDeVue");
 		getContentPane().add(lblPluginsDeVue);
-		
+
 		JLabel lblPluginsDanalyse = new JLabel("Plugins d'analyse");
 		lblPluginsDanalyse.setBounds(21, 349, 121, 14);
 		lblPluginsDanalyse.setName("lblPluginsDanalyse");
@@ -252,9 +276,10 @@ public class GUI extends JFrame
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
+
 	/**
-	 * methode invoquant les différentes methodes des plugins
-	 * permet d'appliquer les plugins sélectionnés par l'utilisateur
+	 * methode invoquant les différentes methodes des plugins permet d'appliquer
+	 * les plugins sélectionnés par l'utilisateur
 	 */
 	public void executePlugins()
 	{
@@ -264,25 +289,25 @@ public class GUI extends JFrame
 			try
 			{
 				Object obj = Model.getViewPlugin().newInstance();
-				
+
 				System.out.println(methods[i].getName());
 				if (methods[i].getName().equals("changerCouleur"))
 				{
 					methods[i].invoke(obj, GUI.this);
 				}
-				if(methods[i].getName().equals("changerTaille"))
+				if (methods[i].getName().equals("changerTaille"))
 				{
 					methods[i].invoke(obj, GUI.this);
 				}
-				if(methods[i].getName().equals("changerFormeBoutons"))
+				if (methods[i].getName().equals("changerFormeBoutons"))
 				{
 					methods[i].invoke(obj, GUI.this);
 				}
-				if(methods[i].getName().equals("ajouterElement"))
+				if (methods[i].getName().equals("ajouterElement"))
 				{
 					methods[i].invoke(obj, GUI.this);
 				}
-				if(methods[i].getName().equals("customList"))
+				if (methods[i].getName().equals("customList"))
 				{
 					methods[i].invoke(obj, GUI.this);
 				}
@@ -306,11 +331,12 @@ public class GUI extends JFrame
 
 		}
 	}
-	
+
+
 	/**
-	 * reconstruit la liste contenant le contenu du dossier exploré
-	 * afin de reconstruire la liste, on en crée une autre identique
-	 * avec les nouvelles valeurs
+	 * reconstruit la liste contenant le contenu du dossier exploré afin de
+	 * reconstruire la liste, on en crée une autre identique avec les nouvelles
+	 * valeurs
 	 */
 	public void rebuildList()
 	{
@@ -399,9 +425,9 @@ public class GUI extends JFrame
 	{
 		GUI myGUI = new GUI();
 		Component[] comp = myGUI.getContentPane().getComponents();
-		for (int i = 0; i<comp.length; i++)
+		for (int i = 0; i < comp.length; i++)
 		{
-			System.out.println("GUI.main() "+comp[i].getName());
+			System.out.println("GUI.main() " + comp[i].getName());
 		}
 	}
 }

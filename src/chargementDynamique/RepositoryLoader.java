@@ -14,74 +14,82 @@ public class RepositoryLoader
 	static MyClassLoader mcl = new MyClassLoader();
 
 
-	public void parcours(File base)
+	public boolean parcours(File base)
 	{
 
 		File[] listFiles = base.listFiles();
-		for (int i = 0; i < listFiles.length; i++)
+		if (listFiles.length == 0)
+			return false;
+		else
 		{
-			System.out.println("RepositoryLoader.parcours() " + listFiles[i].getName());
-			if (listFiles[i].isDirectory())
+			for (int i = 0; i < listFiles.length; i++)
 			{
-				parcours(listFiles[i]);
-			} else if (listFiles[i].getName().endsWith(".class"))
-			{
-				try
+				System.out.println("RepositoryLoader.parcours() " + listFiles[i].getName());
+				if (listFiles[i].isDirectory())
 				{
-
-					String classPath = listFiles[i].getCanonicalPath();
-					int index = classPath.indexOf("Plugins");
-					String packageName = classPath.substring(index + 8);
-					System.out.println("RepositoryLoader.parcours() packageName : " + packageName);
-					if (Model.isWindows())
-						packageName = packageName.replaceAll("\\\\", "\\.");
-					if (Model.isUnix())
-						packageName = packageName.replaceAll("/", "\\.");
-
-					System.out.println("RepositoryLoader.parcours() packageName avec les points : " + packageName);
-
-					int classIndex = packageName.indexOf(".class");
-					if (classIndex > 0)
+					parcours(listFiles[i]);
+				} else if (listFiles[i].getName().endsWith(".class"))
+				{
+					try
 					{
-						packageName = packageName.substring(0, classIndex);
-						System.out.println("RepositoryLoader.parcours() packageName fini : " + packageName);
-					}
-					if (!(packageName.contains("IPluginAnalyse") || packageName.contains("IPluginView")))
-					{
-						mcl.path.add(listFiles[i].getParentFile());
-						Class cl = mcl.loadClass(packageName);
-//						System.out.println("RepositoryLoader.parcours() classe chargée : " + cl.getName());
-						Class[] interfaces = cl.getInterfaces();
-						// System.out.println("SelectPluginFrame.SelectPluginFrame().new ActionListener() {...}.actionPerformed() "+
-						// Model.getPlugin().getName());
-						if (interfaces.length != 0)
+
+						String classPath = listFiles[i].getCanonicalPath();
+						int index = classPath.indexOf("Plugins");
+						String packageName = classPath.substring(index + 8);
+						System.out.println("RepositoryLoader.parcours() packageName : " + packageName);
+						if (Model.isWindows())
+							packageName = packageName.replaceAll("\\\\", "\\.");
+						if (Model.isUnix())
+							packageName = packageName.replaceAll("/", "\\.");
+
+						System.out.println("RepositoryLoader.parcours() packageName avec les points : " + packageName);
+
+						int classIndex = packageName.indexOf(".class");
+						if (classIndex > 0)
 						{
-							for (int j = 0; j < interfaces.length; j++)
+							packageName = packageName.substring(0, classIndex);
+							System.out.println("RepositoryLoader.parcours() packageName fini : " + packageName);
+						}
+						if (!(packageName.contains("IPluginAnalyse") || packageName.contains("IPluginView")))
+						{
+							mcl.path.add(listFiles[i].getParentFile());
+							Class cl = mcl.loadClass(packageName);
+							// System.out.println("RepositoryLoader.parcours() classe chargée : "
+							// + cl.getName());
+							Class[] interfaces = cl.getInterfaces();
+							// System.out.println("SelectPluginFrame.SelectPluginFrame().new ActionListener() {...}.actionPerformed() "+
+							// Model.getPlugin().getName());
+							if (interfaces.length != 0)
 							{
-//								System.out.println("SelectPluginFrame.SelectPluginFrame() " + cl.getInterfaces()[j]);
-								if (interfaces[j].getName().contains("IPluginView"))
+								for (int j = 0; j < interfaces.length; j++)
 								{
-									Model.addViewPlugin(cl);
-									System.out.println("Plugin de vue ajouté : "+cl.getName());
-								} else if (interfaces[j].getName().contains("IPluginAnalyse"))
-								{
-									Model.addAnalysisPlugin(cl);
-									System.out.println("Plugin d'analyse ajouté "+cl.getName());
+									// System.out.println("SelectPluginFrame.SelectPluginFrame() "
+									// + cl.getInterfaces()[j]);
+									if (interfaces[j].getName().contains("IPluginView"))
+									{
+										Model.addViewPlugin(cl);
+										System.out.println("Plugin de vue ajouté : " + cl.getName());
+									} else if (interfaces[j].getName().contains("IPluginAnalyse"))
+									{
+										Model.addAnalysisPlugin(cl);
+										System.out.println("Plugin d'analyse ajouté " + cl.getName());
+									}
 								}
-							}
-						} else
-							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
+							} else
+								System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
+						}
+					} catch (IOException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ClassNotFoundException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				} catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ClassNotFoundException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
+			return true;
 		}
 	}
 
