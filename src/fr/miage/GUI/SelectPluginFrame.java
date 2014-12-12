@@ -49,9 +49,7 @@ public class SelectPluginFrame extends JFrame
 						if(zipIndex>0)
 							name = Model.getPluginToLoad().getName().substring(0, zipIndex);
 						
-//						System.out.println("SelectPluginFrame.SelectPluginFrame().new ActionListener() {...}.actionPerformed()"+name);
 						String className = zip.unzipGetPackage(Model.getPluginToLoad(), name);
-//						System.out.println("SelectPluginFrame.SelectPluginFrame().new ActionListener() {...}.actionPerformed()"+className);
 						mcl.path.add(Model.getPluginToLoad());
 						Class cl = mcl.loadClass(className);
 						Class[] interfaces = cl.getInterfaces();

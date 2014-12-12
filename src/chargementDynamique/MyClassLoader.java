@@ -37,10 +37,10 @@ public class MyClassLoader extends SecureClassLoader
 
 		System.out.println("MyClassLoader.loadClassData() nom de la classe à charger : " + name);
 		String chemin = "";
-		if (Model.getOsName().contains("windows"))
+		if (Model.isWindows())
 			chemin = name.replaceAll("\\.", "\\\\");
 		else
-			if(Model.getOsName().contains("nux")||Model.getOsName().contains("nix")||Model.getOsName().contains("aix"))
+			if(Model.isUnix())
 				chemin = name.replaceAll("\\.", "/");
 
 		System.out.println("MyClassLoader.loadClassData() chemin après remplacement : " + chemin);

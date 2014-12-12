@@ -5,8 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -15,6 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import chargementDynamique.RepositoryLoader;
@@ -30,7 +36,11 @@ public class GUI extends JFrame
 	private JList list;
 	JScrollPane scrollPane;
 	RepositoryLoader repo = new RepositoryLoader();
-	
+	/**
+	 * liste des plugins que l'utilisateur a appliqué depuis l'ouverture du logiciel
+	 */
+	String tmp="";
+
 	GUI()
 	{
 		listing = new FileListing();
@@ -50,18 +60,25 @@ public class GUI extends JFrame
 			{
 				new File("C:\\Plugins").mkdir();
 				repo.parcours(new File("C:\\Plugins"));
-			}
-			else
+			} else
 			{
 				new File("/Plugins").mkdir();
 				repo.parcours(new File("/Plugins"));
 			}
 		}
 
+		
+		if(!Model.isViewEmpty())
+			Model.setViewPlugin(Model.getFirstViewPlugin());
+		if(!Model.isAnalyseEmpty())
+			Model.setAnalysisPlugin(Model.getFirstAnalysisPlugin());
+		
 		this.setTitle("Explorateur");
 		this.setSize(500, 500);
 		getContentPane().setLayout(null);
 
+		applyPreferences();
+		
 		// créer un nouveau dossier, dans le repertoire courant de l'explorateur
 		JButton newFile = new JButton("New");
 		newFile.setName("newFile");
@@ -82,8 +99,6 @@ public class GUI extends JFrame
 		btnRemonter.addActionListener(new ActionListener()
 		{
 			CannotAccessErrorFrame error = null;
-
-
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
@@ -161,7 +176,6 @@ public class GUI extends JFrame
 					}
 				}
 			}
-
 		});
 
 		scrollPane.setViewportView(list);
@@ -207,13 +221,35 @@ public class GUI extends JFrame
 		 */
 		JButton btnAppliquerPlugins = new JButton("Appliquer Plugins");
 		btnAppliquerPlugins.setName("btnAppliquerPlugins");
-		btnAppliquerPlugins.setBounds(182, 428, 130, 23);
+		btnAppliquerPlugins.setBounds(170, 412, 130, 23);
 		btnAppliquerPlugins.addActionListener(new ActionListener()
 		{
 
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				if(tmp=="")
+					if(Model.getAnalysisPlugin()!=null)
+						if(Model.getViewPlugin()!=null)
+							tmp=Model.getAnalysisPlugin().getName()+System.getProperty("line.separator")+Model.getViewPlugin().getName();
+						else
+							tmp=Model.getAnalysisPlugin().getName()+System.getProperty("line.separator")+"";
+					else
+						if(Model.getViewPlugin()!=null)
+							tmp=""+System.getProperty("line.separator")+Model.getViewPlugin().getName();
+						else
+							tmp=""+System.getProperty("line.separator")+"";
+				else
+					if(Model.getAnalysisPlugin()!=null)
+						if(Model.getViewPlugin()!=null)
+							tmp+=System.getProperty("line.separator")+Model.getAnalysisPlugin().getName()+System.getProperty("line.separator")+Model.getViewPlugin().getName();
+						else
+							tmp+=System.getProperty("line.separator")+Model.getAnalysisPlugin().getName()+System.getProperty("line.separator")+"";
+					else
+						if(Model.getViewPlugin()!=null)
+							tmp+=System.getProperty("line.separator")+""+System.getProperty("line.separator")+Model.getViewPlugin().getName();
+						else
+							tmp+=System.getProperty("line.separator")+""+System.getProperty("line.separator")+"";
 				executePlugins();
 			}
 		});
@@ -260,15 +296,17 @@ public class GUI extends JFrame
 		}
 		analysisPlugins.setBounds(170, 346, 148, 20);
 		analysisPlugins.setName("analysisPlugins");
-		analysisPlugins.addActionListener(new ActionListener(){
+		analysisPlugins.addActionListener(new ActionListener()
+		{
 
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				String selected = analysisPlugins.getSelectedItem().toString();
 				Model.setAnalysisPlugin(Model.getAnalysisPlugin(selected));
-				
-			}});
+
+			}
+		});
 		getContentPane().add(analysisPlugins);
 
 		JLabel lblPluginsDeVue = new JLabel("Plugins de vue");
@@ -280,11 +318,61 @@ public class GUI extends JFrame
 		lblPluginsDanalyse.setBounds(21, 349, 121, 14);
 		lblPluginsDanalyse.setName("lblPluginsDanalyse");
 		getContentPane().add(lblPluginsDanalyse);
+		
+		JButton btnSauvegarder = new JButton("Sauvegarder");
+		btnSauvegarder.setName("btnSauvegarder");
+		btnSauvegarder.setBounds(330, 412, 130, 23);
+		btnSauvegarder.addActionListener(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				PrintWriter writer = null;
+				try
+				{
+					String[] lines = tmp.split(System.getProperty("line.separator"));
+					writer = new PrintWriter("preferences.txt", "UTF-8");
+					for (int i=0; i<lines.length; i++)
+					{
+						writer.println(lines[i]);
+					}
+					writer.close();
+				} catch (FileNotFoundException e1)
+				{
+				} catch (UnsupportedEncodingException e1)
+				{
+				}
+				PreferencesSavedFrame saved = new PreferencesSavedFrame();
+			}
+		});
+		getContentPane().add(btnSauvegarder);
+		
+		JButton btnAnnulerPlugins = new JButton("Annuler Plugin");
+		btnAnnulerPlugins.setBounds(21, 412, 121, 23);
+		btnAnnulerPlugins.setName("btnAnnulerPlugins");
+		btnAnnulerPlugins.addActionListener(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+////				GUI.this.getContentPane().removeAll();
+////				GUI.this.setContentPane(Model.getLastPanel());
+////				GUI.this.getContentPane().revalidate();
+////				GUI.this.getContentPane().repaint();
+//				JFrame f = new JFrame("test");
+//				f.setSize(Model.getLastPanel().getSize());
+//				f.getContentPane().add(Model.getLastPanel());
+//				f.setVisible(true);
+			}
+		});
+		getContentPane().add(btnAnnulerPlugins);
 
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
-
 
 	/**
 	 * methode invoquant les différentes methodes des plugins permet d'appliquer
@@ -292,62 +380,99 @@ public class GUI extends JFrame
 	 */
 	public void executePlugins()
 	{
-		Method[] methodsView = Model.getViewPlugin().getMethods();
-		Method[] methodsAnalysis = Model.getAnalysisPlugin().getMethods();
-		for (int i = 0; i < methodsView.length; i++)
-		{
-			try
-			{
-				Object view = Model.getViewPlugin().newInstance();
-				Object analyse = Model.getAnalysisPlugin().newInstance();
-				System.out.println(methodsView[i].getName());
-				if (methodsView[i].getName().equals("changerCouleur"))
-				{
-					methodsView[i].invoke(view, GUI.this);
-				}
-				if (methodsView[i].getName().equals("changerTaille"))
-				{
-					methodsView[i].invoke(view, GUI.this);
-				}
-				if (methodsView[i].getName().equals("changerFormeBoutons"))
-				{
-					methodsView[i].invoke(view, GUI.this);
-				}
-				if (methodsView[i].getName().equals("ajouterElement"))
-				{
-					methodsView[i].invoke(view, GUI.this);
-				}
-				if (methodsView[i].getName().equals("customList"))
-				{
-					methodsView[i].invoke(view, GUI.this);
-				}
-				
-				if(methodsAnalysis[i].getName().equals("trier"))
-				{
-					methodsAnalysis[i].invoke(analyse, GUI.this);
-				}		
-				if(methodsAnalysis[i].getName().equals("ajouterDonnees"))
-				{
-					methodsAnalysis[i].invoke(analyse, GUI.this);
-				}
-			} catch (InstantiationException e2)
-			{
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			} catch (IllegalAccessException e2)
-			{
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			} catch (IllegalArgumentException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (InvocationTargetException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		JPanel contentPane = (JPanel) GUI.this.getContentPane();
+		Model.setLastPanel(contentPane);
+		
+		Method[] methodsView = null;
+		if (Model.getViewPlugin() != null)
+			methodsView = Model.getViewPlugin().getMethods();
 
+		Method[] methodsAnalysis = null;
+		if (Model.getAnalysisPlugin() != null)
+			methodsAnalysis = Model.getAnalysisPlugin().getMethods();
+
+		if (methodsView != null)
+		{
+			for (int i = 0; i < methodsView.length; i++)
+			{
+				try
+				{
+					Object view = Model.getViewPlugin().newInstance();
+					System.out.println(methodsView[i].getName());
+					if (methodsView[i].getName().equals("changerCouleur"))
+					{
+						methodsView[i].invoke(view, GUI.this);
+					}
+					if (methodsView[i].getName().equals("changerTaille"))
+					{
+						methodsView[i].invoke(view, GUI.this);
+					}
+					if (methodsView[i].getName().equals("changerFormeBoutons"))
+					{
+						methodsView[i].invoke(view, GUI.this);
+					}
+					if (methodsView[i].getName().equals("ajouterElement"))
+					{
+						methodsView[i].invoke(view, GUI.this);
+					}
+					if (methodsView[i].getName().equals("customList"))
+					{
+						methodsView[i].invoke(view, GUI.this);
+					}
+				} catch (InstantiationException e2)
+				{
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				} catch (IllegalAccessException e2)
+				{
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				} catch (IllegalArgumentException e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvocationTargetException e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+			if (methodsAnalysis != null)
+			{
+				for (int j = 0; j < methodsAnalysis.length; j++)
+				{
+					Object analyse;
+					try
+					{
+						analyse = Model.getAnalysisPlugin().newInstance();
+						if (methodsAnalysis[j].getName().equals("trier"))
+						{
+							methodsAnalysis[j].invoke(analyse, GUI.this);
+						}
+						if (methodsAnalysis[j].getName().equals("ajouterDonnees"))
+						{
+							methodsAnalysis[j].invoke(analyse, GUI.this);
+						}
+					} catch (InstantiationException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 
@@ -437,6 +562,127 @@ public class GUI extends JFrame
 		GUI.this.getContentPane().revalidate();
 		GUI.this.getContentPane().repaint();
 
+	}
+
+
+	public void applyPreferences()
+	{
+		BufferedReader br;
+		try
+		{
+			br = new BufferedReader(new FileReader("preferences.txt"));
+			try
+			{
+				StringBuilder sb = new StringBuilder();
+				String line = br.readLine();
+
+				while (line != null)
+				{
+					sb.append(line);
+					sb.append(System.lineSeparator());
+					line = br.readLine();
+					if(line!="")
+						execute(line);
+				}
+			} catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally
+			{
+				try
+				{
+					br.close();
+				} catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} catch (FileNotFoundException e)
+		{
+		}
+
+	}
+
+
+	public void execute(String className)
+	{
+		Class plugin = null;
+		String pluginType = "";
+		if (Model.getAnalysisPlugin(className) != null)
+		{
+			plugin = Model.getAnalysisPlugin(className);
+			pluginType = "Analyse";
+		} else if (Model.getViewPlugin(className) != null)
+		{
+			plugin = Model.getViewPlugin(className);
+			pluginType = "View";
+		}
+
+		if (plugin != null)
+		{
+			Method[] methods = plugin.getMethods();
+			try
+			{
+				Object pluginObject = plugin.newInstance();
+				for (int i = 0; i < methods.length; i++)
+				{
+					if (pluginType == "Analyse")
+					{
+						if (methods[i].getName().equals("trier"))
+						{
+							methods[i].invoke(pluginObject, GUI.this);
+						}
+						if (methods[i].getName().equals("ajouterDonnees"))
+						{
+							methods[i].invoke(pluginObject, GUI.this);
+						}
+					}
+					else
+					{
+						if (methods[i].getName().equals("changerCouleur"))
+						{
+							methods[i].invoke(pluginObject, GUI.this);
+						}
+						if (methods[i].getName().equals("changerTaille"))
+						{
+							methods[i].invoke(pluginObject, GUI.this);
+						}
+						if (methods[i].getName().equals("changerFormeBoutons"))
+						{
+							methods[i].invoke(pluginObject, GUI.this);
+						}
+						if (methods[i].getName().equals("ajouterElement"))
+						{
+							methods[i].invoke(pluginObject, GUI.this);
+						}
+						if (methods[i].getName().equals("customList"))
+						{
+							methods[i].invoke(pluginObject, GUI.this);
+						}
+					}
+				}
+
+			} catch (InstantiationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
 	}
 
 

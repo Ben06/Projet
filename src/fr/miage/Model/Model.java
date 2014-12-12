@@ -1,11 +1,14 @@
 package fr.miage.Model;
 
+import java.awt.Container;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JPanel;
 
 
 public class Model
@@ -31,19 +34,16 @@ public class Model
 
 	private static File pluginToLoad;
 
-	private static String pluginToLoadStr;
-	
 	/**
 	 * liste des plugins de vue
 	 */
-	private static Map<String, Class> viewPlugins = new HashMap<String, Class>();
-	
+	private static Map<String, Class> viewPlugins = new LinkedHashMap<String, Class>();
+
 	/**
 	 * liste des plugins d'analyse
 	 */
-	private static Map<String, Class> analysisPlugins = new HashMap<String, Class>();
+	private static Map<String, Class> analysisPlugins = new LinkedHashMap<String, Class>();
 
-	
 	/**
 	 * le plugin de vue sélectionné dans la liste déroulante
 	 */
@@ -53,7 +53,7 @@ public class Model
 	 * le pluginn d'analyse séléctionné dans la liste déroulante
 	 */
 	private static Class analysisPlugin;
-	
+
 	/**
 	 * plugin à charger, ajouté via le bouton AddPlugin du GUI
 	 */
@@ -61,6 +61,49 @@ public class Model
 
 	private static String osName = System.getProperty("os.name").toLowerCase();
 
+	/**
+	 * utilisé pour revenir en arrière dans l'application des plugins
+	 */
+	private static JPanel lastPanel;
+
+	
+	
+	public static JPanel getLastPanel()
+	{
+		return lastPanel;
+	}
+
+
+	public static void setLastPanel(Container container)
+	{
+		Model.lastPanel = (JPanel) container;
+	}
+
+
+	public static boolean isAnalyseEmpty()
+	{
+		if(analysisPlugins.size()!=0)
+			return false;
+		else
+			return true;
+	}
+	
+	public static boolean isViewEmpty()
+	{
+		if(viewPlugins.size()!=0)
+			return false;
+		else
+			return true;
+	}
+	public static Class getFirstViewPlugin()
+	{
+		return viewPlugins.entrySet().iterator().next().getValue();
+	}
+
+	public static Class getFirstAnalysisPlugin()
+	{
+		return analysisPlugins.entrySet().iterator().next().getValue();
+	}
 	
 	public static String[] viewPluginsNameToArray()
 	{
@@ -73,11 +116,11 @@ public class Model
 		}
 		return viewPluginsNames;
 	}
-	
-	
+
+
 	public static String[] analysisPluginsNameToArray()
 	{
-		String[] analysisPluginsNames = new String[analysisPlugins.size()]; 
+		String[] analysisPluginsNames = new String[analysisPlugins.size()];
 		int i = 0;
 		for (String key : analysisPlugins.keySet())
 		{
@@ -86,61 +129,66 @@ public class Model
 		}
 		return analysisPluginsNames;
 	}
-	
+
 	public static Class getViewPlugin(String name)
 	{
 		return viewPlugins.get(name);
 	}
-	
+
+
 	public static Class getAnalysisPlugin(String name)
 	{
 		return analysisPlugins.get(name);
 	}
 
+
 	public static void addViewPlugin(Class cl)
 	{
 		viewPlugins.put(cl.getName(), cl);
 	}
-	
+
+
 	public static void addAnalysisPlugin(Class cl)
 	{
 		analysisPlugins.put(cl.getName(), cl);
 	}
+
+
 	public static Class getPlugin()
 	{
 		return plugin;
 	}
 
-	public static String getOsName()
-	{
-		return osName;
-	}
-
-
 	public static void setPlugin(Class plugin)
 	{
 		Model.plugin = plugin;
-		
+
 	}
 
-
+	/**
+	 * retourne le plugin de vue sélectionné dans la liste déroulante
+	 * @return
+	 */
 	public static Class getViewPlugin()
 	{
 		return viewPlugin;
 	}
 
 
-	public static void setViewPlugin(Class viewPlugin)
-	{
-		Model.viewPlugin = viewPlugin;
-	}
-
-
+	/**
+	 * retourne le plugin d'analyse sélectionné dans la liste déroulante
+	 * @return
+	 */
 	public static Class getAnalysisPlugin()
 	{
 		return analysisPlugin;
 	}
-
+	
+	
+	public static void setViewPlugin(Class viewPlugin)
+	{
+		Model.viewPlugin = viewPlugin;
+	}
 
 	public static void setAnalysisPlugin(Class analysisPlugin)
 	{
@@ -158,12 +206,16 @@ public class Model
 
 	public static boolean isUnix()
 	{
-		if(Model.osName.contains("nux") || Model.osName.contains("nix") || Model.osName.contains("aix"))
+		if (Model.osName.contains("nux") || Model.osName.contains("nix") || Model.osName.contains("aix"))
 			return true;
 		else
 			return false;
 	}
 
+	/**
+	 * transforme le chemin du plugin à chargé en nom de classe (accompagné du package)
+	 * @return
+	 */
 	public static String getPluginToLoadStr()
 	{
 
@@ -247,13 +299,6 @@ public class Model
 
 		return classname + "." + fname;
 	}
-
-
-	public static void setPluginToLoadStr(String pluginToLoadStr)
-	{
-		Model.pluginToLoadStr = pluginToLoadStr;
-	}
-
 
 	public static File getRepCourant()
 	{
