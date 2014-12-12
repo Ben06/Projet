@@ -260,6 +260,15 @@ public class GUI extends JFrame
 		}
 		analysisPlugins.setBounds(170, 346, 148, 20);
 		analysisPlugins.setName("analysisPlugins");
+		analysisPlugins.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				String selected = analysisPlugins.getSelectedItem().toString();
+				Model.setAnalysisPlugin(Model.getAnalysisPlugin(selected));
+				
+			}});
 		getContentPane().add(analysisPlugins);
 
 		JLabel lblPluginsDeVue = new JLabel("Plugins de vue");
@@ -283,33 +292,43 @@ public class GUI extends JFrame
 	 */
 	public void executePlugins()
 	{
-		Method[] methods = Model.getViewPlugin().getMethods();
-		for (int i = 0; i < methods.length; i++)
+		Method[] methodsView = Model.getViewPlugin().getMethods();
+		Method[] methodsAnalysis = Model.getAnalysisPlugin().getMethods();
+		for (int i = 0; i < methodsView.length; i++)
 		{
 			try
 			{
-				Object obj = Model.getViewPlugin().newInstance();
-
-				System.out.println(methods[i].getName());
-				if (methods[i].getName().equals("changerCouleur"))
+				Object view = Model.getViewPlugin().newInstance();
+				Object analyse = Model.getAnalysisPlugin().newInstance();
+				System.out.println(methodsView[i].getName());
+				if (methodsView[i].getName().equals("changerCouleur"))
 				{
-					methods[i].invoke(obj, GUI.this);
+					methodsView[i].invoke(view, GUI.this);
 				}
-				if (methods[i].getName().equals("changerTaille"))
+				if (methodsView[i].getName().equals("changerTaille"))
 				{
-					methods[i].invoke(obj, GUI.this);
+					methodsView[i].invoke(view, GUI.this);
 				}
-				if (methods[i].getName().equals("changerFormeBoutons"))
+				if (methodsView[i].getName().equals("changerFormeBoutons"))
 				{
-					methods[i].invoke(obj, GUI.this);
+					methodsView[i].invoke(view, GUI.this);
 				}
-				if (methods[i].getName().equals("ajouterElement"))
+				if (methodsView[i].getName().equals("ajouterElement"))
 				{
-					methods[i].invoke(obj, GUI.this);
+					methodsView[i].invoke(view, GUI.this);
 				}
-				if (methods[i].getName().equals("customList"))
+				if (methodsView[i].getName().equals("customList"))
 				{
-					methods[i].invoke(obj, GUI.this);
+					methodsView[i].invoke(view, GUI.this);
+				}
+				
+				if(methodsAnalysis[i].getName().equals("trier"))
+				{
+					methodsAnalysis[i].invoke(analyse, GUI.this);
+				}		
+				if(methodsAnalysis[i].getName().equals("ajouterDonnees"))
+				{
+					methodsAnalysis[i].invoke(analyse, GUI.this);
 				}
 			} catch (InstantiationException e2)
 			{

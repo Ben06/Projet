@@ -41,7 +41,7 @@ public class Model
 	/**
 	 * liste des plugins d'analyse
 	 */
-	private static List<Class> analysisPlugins = new ArrayList<Class>();
+	private static Map<String, Class> analysisPlugins = new HashMap<String, Class>();
 
 	
 	/**
@@ -78,9 +78,11 @@ public class Model
 	public static String[] analysisPluginsNameToArray()
 	{
 		String[] analysisPluginsNames = new String[analysisPlugins.size()]; 
-		for (int i = 0; i<analysisPlugins.size(); i++)
+		int i = 0;
+		for (String key : analysisPlugins.keySet())
 		{
-			analysisPluginsNames[i] = analysisPlugins.get(i).getName();
+			analysisPluginsNames[i] = key;
+			i++;
 		}
 		return analysisPluginsNames;
 	}
@@ -90,9 +92,9 @@ public class Model
 		return viewPlugins.get(name);
 	}
 	
-	public static Class getAnalysisPlugin(int index)
+	public static Class getAnalysisPlugin(String name)
 	{
-		return analysisPlugins.get(index);
+		return analysisPlugins.get(name);
 	}
 
 	public static void addViewPlugin(Class cl)
@@ -102,7 +104,7 @@ public class Model
 	
 	public static void addAnalysisPlugin(Class cl)
 	{
-		analysisPlugins.add(cl);
+		analysisPlugins.put(cl.getName(), cl);
 	}
 	public static Class getPlugin()
 	{
