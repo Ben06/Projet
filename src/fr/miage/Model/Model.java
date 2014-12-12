@@ -109,7 +109,6 @@ public class Model
 		return plugin;
 	}
 
-
 	public static String getOsName()
 	{
 		return osName;
@@ -119,6 +118,7 @@ public class Model
 	public static void setPlugin(Class plugin)
 	{
 		Model.plugin = plugin;
+		
 	}
 
 

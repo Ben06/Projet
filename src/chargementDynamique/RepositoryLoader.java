@@ -1,6 +1,7 @@
 package chargementDynamique;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import fr.miage.GUI.WrongPluginFrame;
@@ -32,7 +33,6 @@ public class RepositoryLoader
 				{
 					try
 					{
-
 						String classPath = listFiles[i].getCanonicalPath();
 						int index = classPath.indexOf("Plugins");
 						String packageName = classPath.substring(index + 8);
@@ -75,9 +75,10 @@ public class RepositoryLoader
 										System.out.println("Plugin d'analyse ajouté " + cl.getName());
 									}
 								}
-							} else
-								System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
+							} 
 						}
+						else
+							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
 					} catch (IOException e)
 					{
 						// TODO Auto-generated catch block
@@ -87,6 +88,100 @@ public class RepositoryLoader
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+				} else if (listFiles[i].getName().endsWith(".zip"))
+				{
+					MyZip zip = new MyZip();
+					try
+					{
+						System.out.println("RepositoryLoader.parcours() dans le zip");
+						int index = listFiles[i].getName().indexOf(".zip");
+						String name="";
+						if (index>0)
+							name = listFiles[i].getName().substring(0, index);
+						String className = zip.unzipGetPackage(listFiles[i], name);
+						mcl.path.add(listFiles[i]);
+						Class cl = mcl.loadClass(className);
+						
+						Class[] interfaces = cl.getInterfaces();
+						// System.out.println("SelectPluginFrame.SelectPluginFrame().new ActionListener() {...}.actionPerformed() "+
+						// Model.getPlugin().getName());
+						if (interfaces.length != 0)
+						{
+							for (int j = 0; j < interfaces.length; j++)
+							{
+								// System.out.println("SelectPluginFrame.SelectPluginFrame() "
+								// + cl.getInterfaces()[j]);
+								if (interfaces[j].getName().contains("IPluginView"))
+								{
+									Model.addViewPlugin(cl);
+									System.out.println("Plugin de vue ajouté : " + cl.getName());
+								} else if (interfaces[j].getName().contains("IPluginAnalyse"))
+								{
+									Model.addAnalysisPlugin(cl);
+									System.out.println("Plugin d'analyse ajouté " + cl.getName());
+								}
+							}
+						} else
+							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
+					} catch (FileNotFoundException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ClassNotFoundException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+					
+				}
+				else if(listFiles[i].getName().endsWith(".jar"))
+				{
+					MyJar jar = new MyJar();
+					try
+					{
+						String className = jar.unjarGetPackage(listFiles[i], listFiles[i].getName());
+						mcl.path.add(listFiles[i]);
+						Class cl = mcl.loadClass(className);
+						
+						Class[] interfaces = cl.getInterfaces();
+						// System.out.println("SelectPluginFrame.SelectPluginFrame().new ActionListener() {...}.actionPerformed() "+
+						// Model.getPlugin().getName());
+						if (interfaces.length != 0)
+						{
+							for (int j = 0; j < interfaces.length; j++)
+							{
+								// System.out.println("SelectPluginFrame.SelectPluginFrame() "
+								// + cl.getInterfaces()[j]);
+								if (interfaces[j].getName().contains("IPluginView"))
+								{
+									Model.addViewPlugin(cl);
+									System.out.println("Plugin de vue ajouté : " + cl.getName());
+								} else if (interfaces[j].getName().contains("IPluginAnalyse"))
+								{
+									Model.addAnalysisPlugin(cl);
+									System.out.println("Plugin d'analyse ajouté " + cl.getName());
+								}
+							}
+						} else
+							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
+					} catch (FileNotFoundException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ClassNotFoundException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+				
 				}
 			}
 			return true;

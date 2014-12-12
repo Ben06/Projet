@@ -16,6 +16,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import fr.miage.Model.Model;
+
 
 public class MyZip
 {
@@ -42,17 +44,11 @@ public class MyZip
 		{
 			while ((ze = zis.getNextEntry()) != null)
 			{
-				// Pour chaque entrée, on crée un fichier
-				// dans le répertoire de sortie "folder"
 				File f = new File(ze.getName());
 
-//				String chemin = name.replaceAll("\\.", "\\\\");
 				if (f.getPath().endsWith(".class")) // à modif par la suite
 				{
-					// modifier le chemin avant
-
 					if (f.getPath().contains(name))
-					// if(f.getPath().equals(anObject))) à modifier par la suite
 					{
 						System.out.println("MyZip.unzip() trouvé " + f.getCanonicalPath());
 						InputStream in = zip.getInputStream(ze);
@@ -93,9 +89,12 @@ public class MyZip
 				File f = new File(ze.getName());
 				if (f.getPath().endsWith(".class")) // à modif par la suite
 				{
+					System.out.println("MyZip.unzipGetPackage() f.getName="+f.getName());
 					// modifier le chemin avant
 					String packageName = "";
 					String fname = f.getName();
+					System.out.println("MyZip.unzipGetPackage() name = "+name);
+					System.out.println("MyZip.unzipGetPackage() "+fname+".contains("+name+")="+fname.contains(name));
 					if (fname.contains(name))
 					// if(f.getPath().equals(anObject))) à modifier par la suite
 					{
@@ -104,27 +103,34 @@ public class MyZip
 						int pos = fname.lastIndexOf(".");
 						if (pos > 0)
 						{ // on enlève le .class du nom du plugin à charger
-//							System.out.println("MyZip.unzipGetPackage() on enlève le .class");
+							System.out.println("MyZip.unzipGetPackage() on enlève le .class");
 							fname = fname.substring(0, pos);
-//							System.out.println("MyZip.unzipGetPackage() fname "+fname);
+							System.out.println("MyZip.unzipGetPackage() fname "+fname);
 						}
 
-						if (f.getParentFile().getCanonicalPath().contains("\\bin\\"))
+						if (f.getParentFile().getCanonicalPath().contains("\\Plugins\\") || f.getParentFile().getCanonicalPath().contains("/Plugins/") )
 						{
-//							System.out.println("MyZip.unzipGetPackage() "+f.getParentFile().getCanonicalPath());
-							int binIndex = f.getParentFile().getCanonicalPath().indexOf("\\bin\\");
+							System.out.println("MyZip.unzipGetPackage() "+f.getParentFile().getCanonicalPath());
+							int binIndex;
+							if(Model.isWindows())
+								binIndex = f.getParentFile().getCanonicalPath().indexOf("\\Plugins\\");
+							else
+								binIndex = f.getParentFile().getCanonicalPath().indexOf("/Plugins/");
 							if (binIndex > 0)
 							{
-//								System.out.println("MyZip.unzipGetPackage() packageName : "+packageName);
-//								System.out.println("MyZip.unzipGetPackage() binIndex "+binIndex);
-								packageName = packageName.substring(binIndex+5);
-								packageName = packageName.replaceAll("\\\\", "\\.");
-//								System.out.println("MyZip.unzip() packageName " + packageName);
-//								System.out.println("MyZip.unzipGetPackage() className : " + packageName +"."+fname);
+								System.out.println("MyZip.unzipGetPackage() packageName : "+packageName);
+								System.out.println("MyZip.unzipGetPackage() binIndex "+binIndex);
+								packageName = packageName.substring(binIndex+9);
+								if(Model.isWindows())
+									packageName = packageName.replaceAll("\\\\", "\\.");
+								else
+									packageName = packageName.replaceAll("/", "\\.");
+								System.out.println("MyZip.unzip() packageName " + packageName);
+								System.out.println("MyZip.unzipGetPackage() className : " + packageName +"."+fname);
 								return packageName +"."+fname;
 							}
 
-						} else if (f.getParentFile().getCanonicalPath().contains("\\bin"))
+						} else if (f.getParentFile().getCanonicalPath().contains("\\Plugins") || f.getParentFile().getCanonicalPath().contains("/Plugins"))
 						{
 							System.out.println("MyZip.unzip() pas de package");
 							return fname;
