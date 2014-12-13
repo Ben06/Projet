@@ -5,8 +5,12 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
@@ -171,14 +175,28 @@ public class TestPluginView2 implements IPluginView {
 		
 		Component[] components = f.getContentPane().getComponents();
 
-		 for(int i=0; i<components.length; i++){ 
-			 
-			 System.out.println("TestPluginView.ajouterElement "+components[i].getName());
-			 
-			
-			 	if(components[i].getName().equals("list")){
-			 		
-			 		components[i].setBackground(Color.black);
+		for (int i = 0; i < components.length; i++)
+		{
+			System.out.println("GUI.main() " + components[i].getName());
+			if(components[i].getName().equals("scrollPane"))
+			{
+				System.out.println("GUI.main() dans le scrollPane");
+				JScrollPane scroll = (JScrollPane) components[i];
+				JViewport view = scroll.getViewport();
+				Component[] list = view.getComponents();
+				for (int j=0; j<list.length; j++)
+				{
+					if(list[j].getName().equals("list"))
+					{
+						
+						list[j].setForeground(Color.decode("#34495e"));
+						((JComponent) list[j]).setBorder( new LineBorder(Color.decode("#34495e")) );
+						ImageIcon icon = new ImageIcon("image.jpg");
+						
+					}
+				}
+			}
+		}
 			 
 			 		
 			 		
@@ -186,9 +204,9 @@ public class TestPluginView2 implements IPluginView {
 			 
 			 	}
 			 	
-		 }
+		 
 			 	
-		 }
+		 
 			 
 			 
 	@Override
