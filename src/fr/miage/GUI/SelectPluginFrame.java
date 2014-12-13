@@ -315,6 +315,7 @@ public class SelectPluginFrame extends JFrame
 		this.getContentPane().add(jf);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
 	}
 
 

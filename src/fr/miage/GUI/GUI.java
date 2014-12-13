@@ -78,8 +78,6 @@ public class GUI extends JFrame
 		this.setTitle("Explorateur");
 		this.setSize(500, 500);
 		getContentPane().setLayout(null);
-
-		applyPreferences();
 		
 		// créer un nouveau dossier, dans le repertoire courant de l'explorateur
 		JButton newFile = new JButton("New");
@@ -271,7 +269,7 @@ public class GUI extends JFrame
 			viewPlugins = new JComboBox();
 		}
 		viewPlugins.setName("viewPlugins");
-		viewPlugins.setBounds(170, 306, 148, 20);
+		viewPlugins.setBounds(170, 306, 250, 20);
 		viewPlugins.addActionListener(new ActionListener()
 		{
 
@@ -296,7 +294,7 @@ public class GUI extends JFrame
 		{
 			analysisPlugins = new JComboBox();
 		}
-		analysisPlugins.setBounds(170, 346, 148, 20);
+		analysisPlugins.setBounds(170, 346, 250, 20);
 		analysisPlugins.setName("analysisPlugins");
 		analysisPlugins.addActionListener(new ActionListener()
 		{
@@ -350,30 +348,25 @@ public class GUI extends JFrame
 		});
 		getContentPane().add(btnSauvegarder);
 		
-		JButton btnAnnulerPlugins = new JButton("Annuler Plugin");
-		btnAnnulerPlugins.setBounds(21, 412, 121, 23);
-		btnAnnulerPlugins.setName("btnAnnulerPlugins");
-		btnAnnulerPlugins.addActionListener(new ActionListener()
+		JButton reset = new JButton("Reset");
+		reset.setBounds(21, 412, 121, 23);
+		reset.setName("reset");
+		reset.addActionListener(new ActionListener()
 		{
 			
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-////				GUI.this.getContentPane().removeAll();
-////				GUI.this.setContentPane(Model.getLastPanel());
-////				GUI.this.getContentPane().revalidate();
-////				GUI.this.getContentPane().repaint();
-//				JFrame f = new JFrame("test");
-//				f.setSize(Model.getLastPanel().getSize());
-//				f.getContentPane().add(Model.getLastPanel());
-//				f.setVisible(true);
+				reset();
 			}
 		});
-		getContentPane().add(btnAnnulerPlugins);
+		getContentPane().add(reset);
 
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		applyPreferences();
 	}
 
 	/**
@@ -617,10 +610,12 @@ public class GUI extends JFrame
 		{
 			plugin = Model.getAnalysisPlugin(className);
 			pluginType = "Analyse";
+//			System.out.println("GUI.execute() analyse");
 		} else if (Model.getViewPlugin(className) != null)
 		{
 			plugin = Model.getViewPlugin(className);
 			pluginType = "View";
+//			System.out.println("GUI.execute() view "+Model.getViewPlugin(className));
 		}
 
 		if (plugin != null)
@@ -688,28 +683,15 @@ public class GUI extends JFrame
 		}
 	}
 
+	public void reset()
+	{
+		GUI.this.dispose();
+		new File("preferences.txt").delete();
+		GUI myGUI = new GUI();
+	}
 
 	public static void main(String[] args)
 	{
 		GUI myGUI = new GUI();
-		Component[] comp = myGUI.getContentPane().getComponents();
-		for (int i = 0; i < comp.length; i++)
-		{
-			System.out.println("GUI.main() " + comp[i].getName());
-			if(comp[i].getName().equals("scrollPane"))
-			{
-				System.out.println("GUI.main() dans le scrollPane");
-				JScrollPane scroll = (JScrollPane) comp[i];
-				JViewport view = scroll.getViewport();
-				Component[] list = view.getComponents();
-				for (int j=0; j<list.length; j++)
-				{
-					if(list[j].getName().equals("list"))
-					{
-						list[j].setBackground(Color.black);
-					}
-				}
-			}
-		}
 	}
 }

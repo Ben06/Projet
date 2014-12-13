@@ -56,6 +56,7 @@ public class CreateFolderGUI extends JFrame {
 		btnCrer.setBounds(161, 64, 89, 23);
 		getContentPane().add(btnCrer);
 		this.setVisible(true);
+		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	

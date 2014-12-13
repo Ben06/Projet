@@ -36,6 +36,7 @@ public class PreferencesSavedFrame extends JFrame
 		lblVosPrfrencesOnt.setBounds(24, 22, 339, 14);
 		getContentPane().add(lblVosPrfrencesOnt);
 		
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		
 	}

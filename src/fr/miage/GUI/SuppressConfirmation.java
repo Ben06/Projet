@@ -49,7 +49,7 @@ public class SuppressConfirmation extends JFrame
 		});
 		getContentPane().add(btnNon);
 		
-		
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		
 	}

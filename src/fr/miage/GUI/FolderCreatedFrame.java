@@ -33,6 +33,7 @@ public class FolderCreatedFrame extends JFrame {
 		btnNewButton.setBounds(107, 26, 57, 27);
 		getContentPane().add(btnNewButton);
 		
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
