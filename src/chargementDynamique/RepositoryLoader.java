@@ -18,6 +18,8 @@ public class RepositoryLoader
 	public boolean parcours(File base)
 	{
 
+		if (!base.exists())
+			return false;
 		File[] listFiles = base.listFiles();
 		if (listFiles.length == 0)
 			return false;

@@ -149,7 +149,7 @@ public class FileListing
 				} else
 					return false;
 			}
-			if(osName.contains("nux") || osName.contains("nux") || osName.contains("aix"))
+			if (osName.contains("nux") || osName.contains("nux") || osName.contains("aix"))
 			{
 				String[] folders = currentPath.split("/");
 				String upPath = "";
@@ -198,11 +198,11 @@ public class FileListing
 		boolean result = false;
 		try
 		{
-			if(osName.contains("nux") || osName.contains("nux") || osName.contains("aix"))
+			if (osName.contains("nux") || osName.contains("nux") || osName.contains("aix"))
 			{
 				result = new File(model.getRepCourant().getCanonicalPath() + "/" + name).mkdir();
 			}
-			if(osName.contains("windows"))
+			if (osName.contains("windows"))
 			{
 				result = new File(model.getRepCourant().getCanonicalPath() + "\\" + name).mkdir();
 			}
@@ -228,10 +228,16 @@ public class FileListing
 
 	public static void main(String[] args) throws IOException
 	{
-		FileListing list = null;
-		list = new FileListing();
+		// FileListing list = null;
+		// list = new FileListing();
+		//
+		// list.setRepCourant(".");
 
-		list.setRepCourant(".");
+		File c = new File("c:");
+		File[] listFiles = c.listFiles();
+		for (int i = 0; i < listFiles.length; i++)
+		{
+			System.out.println(listFiles[i].getCanonicalPath());
+		}
 	}
-
 }

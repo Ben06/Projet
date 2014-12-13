@@ -42,11 +42,21 @@ public class GUI extends JFrame
 	JScrollPane scrollPane;
 	RepositoryLoader repo = new RepositoryLoader();
 	/**
+	 * liste déroulante contenant les différents plugins d'analyse présents
+	 * dans le répertoire de plugins
+	 */
+	JComboBox analysisPlugins;
+	/**
+	 * liste déroulante contenant les différents plugins de vue présents
+	 * dans le répertoire de plugins
+	 */
+	JComboBox viewPlugins;
+	/**
 	 * liste des plugins que l'utilisateur a appliqué depuis l'ouverture du
 	 * logiciel
 	 */
 	String tmp = "";
-
+	
 
 	GUI()
 	{
@@ -60,7 +70,7 @@ public class GUI extends JFrame
 			if (Model.isWindows())
 				repo.parcours(new File("C:\\Plugins"));
 			else
-				repo.parcours(new File("/Plugins"));
+				repo.parcours(new File(System.getProperty( "user.home" )+"/Plugins"));
 		} catch (NullPointerException npe)
 		{
 			if (Model.isWindows())
@@ -69,8 +79,8 @@ public class GUI extends JFrame
 				repo.parcours(new File("C:\\Plugins"));
 			} else
 			{
-				new File("/Plugins").mkdir();
-				repo.parcours(new File("/Plugins"));
+				new File(System.getProperty( "user.home" )+"/Plugins").mkdir();
+				repo.parcours(new File(System.getProperty( "user.home" )+"/Plugins"));
 			}
 		}
 
@@ -260,7 +270,7 @@ public class GUI extends JFrame
 		 * liste déroulante contenant les différents plugins de vue présents
 		 * dans le répertoire plugins
 		 */
-		JComboBox viewPlugins;
+
 		if (Model.viewPluginsNameToArray() != null)
 		{
 			viewPlugins = new JComboBox(Model.viewPluginsNameToArray());
@@ -282,11 +292,7 @@ public class GUI extends JFrame
 		});
 		getContentPane().add(viewPlugins);
 
-		/**
-		 * liste déroulante contenant les différents plugins d'analyse présents
-		 * dans le répertoire de plugins
-		 */
-		JComboBox analysisPlugins;
+
 		if (Model.analysisPluginsNameToArray() != null)
 		{
 			analysisPlugins = new JComboBox(Model.analysisPluginsNameToArray());

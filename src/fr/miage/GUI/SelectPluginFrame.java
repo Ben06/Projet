@@ -25,12 +25,12 @@ public class SelectPluginFrame extends JFrame
 	Model model = new Model();
 	String folder = "";
 	File f = null;
-
+	JFileChooser jf;
 
 	public SelectPluginFrame()
 	{
 		this.setSize(451, 400);
-		JFileChooser jf = new JFileChooser();
+		jf = new JFileChooser();
 		jf.addActionListener(new ActionListener()
 		{
 
