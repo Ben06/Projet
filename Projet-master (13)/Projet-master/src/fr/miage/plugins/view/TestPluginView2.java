@@ -8,6 +8,7 @@ import java.awt.Font;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 
 
 public class TestPluginView2 implements IPluginView {
@@ -69,6 +70,7 @@ public class TestPluginView2 implements IPluginView {
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#34495e"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
+			 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 			 		((JComponent) components[i]).setToolTipText("Accueil");
 			 		components[i].setFont(myFont);
 			 		 
@@ -86,6 +88,7 @@ public class TestPluginView2 implements IPluginView {
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#34495e"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
+			 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 			 		((JComponent) components[i]).setToolTipText("Nouveau Dossier");
 			 		components[i].setFont(myFont);
 			 		
@@ -95,6 +98,7 @@ public class TestPluginView2 implements IPluginView {
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#34495e"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
+			 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 			 		((JComponent) components[i]).setToolTipText("Remonter");
 			 		components[i].setFont(myFont);
 			 		
@@ -104,6 +108,7 @@ public class TestPluginView2 implements IPluginView {
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#34495e"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
+			 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 			 		((JComponent) components[i]).setToolTipText("Effacer");
 			 		components[i].setFont(myFont);
 			 		
@@ -113,6 +118,7 @@ public class TestPluginView2 implements IPluginView {
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#34495e"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
+			 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 			 		((JComponent) components[i]).setToolTipText("Nouveau Dossier");
 			 		components[i].setFont(myFont);
 			 		components[i].setFont(myFont);
@@ -124,6 +130,7 @@ public class TestPluginView2 implements IPluginView {
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#34495e"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
+			 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 			 		((JComponent) components[i]).setToolTipText("Appliquer Plugin");
 			 		components[i].setFont(myFont);
 			
@@ -134,6 +141,7 @@ public class TestPluginView2 implements IPluginView {
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#34495e"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
+			 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 			 		((JComponent) components[i]).setToolTipText("Sauvegarder Plugin");
 			 		components[i].setFont(myFont);
 			
@@ -144,6 +152,7 @@ public class TestPluginView2 implements IPluginView {
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#34495e"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
+			 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 			 		((JComponent) components[i]).setToolTipText("Annuler Plugin");
 			 		components[i].setFont(myFont);
 			
@@ -210,6 +219,7 @@ public class TestPluginView2 implements IPluginView {
 		if(components[i].getName().equals("analysisPlugins")){
 			components[i].setBackground(Color.decode("#34495e"));
 	 		components[i].setForeground(Color.decode("#ecf0f1"));
+	 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 	 		components[i].setFont(myFont);
 	 		
 	 	}
@@ -217,6 +227,7 @@ public class TestPluginView2 implements IPluginView {
 		if(components[i].getName().equals("viewPlugins")){
 			components[i].setBackground(Color.decode("#34495e"));
 	 		components[i].setForeground(Color.decode("#ecf0f1"));
+	 		((JComponent) components[i]).setBorder( new LineBorder(Color.decode("#d35400")));
 	 		components[i].setFont(myFont);
 	 		
 	 	}
