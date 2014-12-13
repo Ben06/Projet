@@ -1,5 +1,6 @@
 package fr.miage.GUI;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 
 import chargementDynamique.RepositoryLoader;
 import fr.miage.Model.Model;
@@ -510,9 +512,10 @@ public class GUI extends JFrame
 		// list.setBounds(155, 76, 319, 205);
 		//
 		//
-		GUI.this.list = new JList(Model.getFileNames().toArray());
-		GUI.this.list.setBounds(155, 76, 319, 205);
-		GUI.this.list.setName("list");
+		GUI.this.list.setListData(Model.getFileNames().toArray());
+//		GUI.this.list = new JList(Model.getFileNames().toArray());
+//		GUI.this.list.setBounds(155, 76, 319, 205);
+//		GUI.this.list.setName("list");
 		GUI.this.list.addMouseListener(new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent evt)
@@ -693,6 +696,20 @@ public class GUI extends JFrame
 		for (int i = 0; i < comp.length; i++)
 		{
 			System.out.println("GUI.main() " + comp[i].getName());
+			if(comp[i].getName().equals("scrollPane"))
+			{
+				System.out.println("GUI.main() dans le scrollPane");
+				JScrollPane scroll = (JScrollPane) comp[i];
+				JViewport view = scroll.getViewport();
+				Component[] list = view.getComponents();
+				for (int j=0; j<list.length; j++)
+				{
+					if(list[j].getName().equals("list"))
+					{
+						list[j].setBackground(Color.black);
+					}
+				}
+			}
 		}
 	}
 }
