@@ -1,7 +1,7 @@
 package fr.miage.GUI;
 
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -15,7 +15,10 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -39,9 +42,11 @@ public class GUI extends JFrame
 	JScrollPane scrollPane;
 	RepositoryLoader repo = new RepositoryLoader();
 	/**
-	 * liste des plugins que l'utilisateur a appliqué depuis l'ouverture du logiciel
+	 * liste des plugins que l'utilisateur a appliqué depuis l'ouverture du
+	 * logiciel
 	 */
-	String tmp="";
+	String tmp = "";
+
 
 	GUI()
 	{
@@ -69,16 +74,15 @@ public class GUI extends JFrame
 			}
 		}
 
-		
-		if(!Model.isViewEmpty())
+		if (!Model.isViewEmpty())
 			Model.setViewPlugin(Model.getFirstViewPlugin());
-		if(!Model.isAnalyseEmpty())
+		if (!Model.isAnalyseEmpty())
 			Model.setAnalysisPlugin(Model.getFirstAnalysisPlugin());
-		
+
 		this.setTitle("Explorateur");
 		this.setSize(500, 500);
 		getContentPane().setLayout(null);
-		
+
 		// créer un nouveau dossier, dans le repertoire courant de l'explorateur
 		JButton newFile = new JButton("New");
 		newFile.setName("newFile");
@@ -99,6 +103,8 @@ public class GUI extends JFrame
 		btnRemonter.addActionListener(new ActionListener()
 		{
 			CannotAccessErrorFrame error = null;
+
+
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
@@ -135,7 +141,7 @@ public class GUI extends JFrame
 		scrollPane.setName("scrollPane");
 		scrollPane.setSize(439, 205);
 		scrollPane.setLocation(21, 75);
-		list = new JList(Model.getFileNames().toArray());
+		list = new JList(Model.getContenu().toArray());
 		list.setName("list");
 		list.setBounds(155, 76, 319, 205);
 
@@ -144,14 +150,12 @@ public class GUI extends JFrame
 			public void mouseClicked(MouseEvent evt)
 			{
 				JList list = (JList) evt.getSource();
-				if (evt.getClickCount() == 1) // selection d'un élément, utilisé
-												// pour la suppresion de fichier
+				if (evt.getClickCount() == 1) // selection d'un élément, utilisé pour la suppresion de fichier
 				{
 					int index = list.locationToIndex(evt.getPoint());
 					GUI.this.model.setSelectedFile(GUI.this.model.getContenu(index));
 				}
-				if (evt.getClickCount() == 2) // double clic sur un élément,
-												// exploration de son contenu
+				if (evt.getClickCount() == 2) // double clic sur un élément, exploration de son contenu
 				{
 					int index = list.locationToIndex(evt.getPoint());
 					if (GUI.this.model.getContenu(index).isDirectory())
@@ -160,9 +164,7 @@ public class GUI extends JFrame
 						{
 							CannotAccessErrorFrame error = null;
 							boolean result = listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
-							if (!result) // erreur, impossible d'accéder au
-											// dossier (dossier protégé /
-											// système)
+							if (!result) // erreur, impossible d'accéder au dossier (dossier protégé / système)
 								error = new CannotAccessErrorFrame();
 							else
 								rebuildList();
@@ -228,28 +230,26 @@ public class GUI extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if(tmp=="")
-					if(Model.getAnalysisPlugin()!=null)
-						if(Model.getViewPlugin()!=null)
-							tmp=Model.getAnalysisPlugin().getName()+System.getProperty("line.separator")+Model.getViewPlugin().getName();
+				if (tmp == "")
+					if (Model.getAnalysisPlugin() != null)
+						if (Model.getViewPlugin() != null)
+							tmp = Model.getAnalysisPlugin().getName() + System.getProperty("line.separator") + Model.getViewPlugin().getName();
 						else
-							tmp=Model.getAnalysisPlugin().getName()+System.getProperty("line.separator")+"";
+							tmp = Model.getAnalysisPlugin().getName() + System.getProperty("line.separator") + "";
+					else if (Model.getViewPlugin() != null)
+						tmp = "" + System.getProperty("line.separator") + Model.getViewPlugin().getName();
 					else
-						if(Model.getViewPlugin()!=null)
-							tmp=""+System.getProperty("line.separator")+Model.getViewPlugin().getName();
-						else
-							tmp=""+System.getProperty("line.separator")+"";
+						tmp = "" + System.getProperty("line.separator") + "";
+				else if (Model.getAnalysisPlugin() != null)
+					if (Model.getViewPlugin() != null)
+						tmp += System.getProperty("line.separator") + Model.getAnalysisPlugin().getName() + System.getProperty("line.separator")
+								+ Model.getViewPlugin().getName();
+					else
+						tmp += System.getProperty("line.separator") + Model.getAnalysisPlugin().getName() + System.getProperty("line.separator") + "";
+				else if (Model.getViewPlugin() != null)
+					tmp += System.getProperty("line.separator") + "" + System.getProperty("line.separator") + Model.getViewPlugin().getName();
 				else
-					if(Model.getAnalysisPlugin()!=null)
-						if(Model.getViewPlugin()!=null)
-							tmp+=System.getProperty("line.separator")+Model.getAnalysisPlugin().getName()+System.getProperty("line.separator")+Model.getViewPlugin().getName();
-						else
-							tmp+=System.getProperty("line.separator")+Model.getAnalysisPlugin().getName()+System.getProperty("line.separator")+"";
-					else
-						if(Model.getViewPlugin()!=null)
-							tmp+=System.getProperty("line.separator")+""+System.getProperty("line.separator")+Model.getViewPlugin().getName();
-						else
-							tmp+=System.getProperty("line.separator")+""+System.getProperty("line.separator")+"";
+					tmp += System.getProperty("line.separator") + "" + System.getProperty("line.separator") + "";
 				executePlugins();
 			}
 		});
@@ -318,13 +318,13 @@ public class GUI extends JFrame
 		lblPluginsDanalyse.setBounds(21, 349, 121, 14);
 		lblPluginsDanalyse.setName("lblPluginsDanalyse");
 		getContentPane().add(lblPluginsDanalyse);
-		
+
 		JButton btnSauvegarder = new JButton("Sauvegarder");
 		btnSauvegarder.setName("btnSauvegarder");
 		btnSauvegarder.setBounds(330, 412, 130, 23);
 		btnSauvegarder.addActionListener(new ActionListener()
 		{
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
@@ -333,7 +333,7 @@ public class GUI extends JFrame
 				{
 					String[] lines = tmp.split(System.getProperty("line.separator"));
 					writer = new PrintWriter("preferences.txt", "UTF-8");
-					for (int i=0; i<lines.length; i++)
+					for (int i = 0; i < lines.length; i++)
 					{
 						writer.println(lines[i]);
 					}
@@ -347,13 +347,13 @@ public class GUI extends JFrame
 			}
 		});
 		getContentPane().add(btnSauvegarder);
-		
+
 		JButton reset = new JButton("Reset");
 		reset.setBounds(21, 412, 121, 23);
 		reset.setName("reset");
 		reset.addActionListener(new ActionListener()
 		{
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
@@ -365,9 +365,10 @@ public class GUI extends JFrame
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
+
 		applyPreferences();
 	}
+
 
 	/**
 	 * methode invoquant les différentes methodes des plugins permet d'appliquer
@@ -377,7 +378,7 @@ public class GUI extends JFrame
 	{
 		JPanel contentPane = (JPanel) GUI.this.getContentPane();
 		Model.setLastPanel(contentPane);
-		
+
 		Method[] methodsView = null;
 		if (Model.getViewPlugin() != null)
 			methodsView = Model.getViewPlugin().getMethods();
@@ -506,9 +507,9 @@ public class GUI extends JFrame
 		//
 		//
 		GUI.this.list.setListData(Model.getFileNames().toArray());
-//		GUI.this.list = new JList(Model.getFileNames().toArray());
-//		GUI.this.list.setBounds(155, 76, 319, 205);
-//		GUI.this.list.setName("list");
+		// GUI.this.list = new JList(Model.getFileNames().toArray());
+		// GUI.this.list.setBounds(155, 76, 319, 205);
+		// GUI.this.list.setName("list");
 		GUI.this.list.addMouseListener(new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent evt)
@@ -577,7 +578,7 @@ public class GUI extends JFrame
 					sb.append(line);
 					sb.append(System.lineSeparator());
 					line = br.readLine();
-					if(line!="")
+					if (line != "")
 						execute(line);
 				}
 			} catch (IOException e)
@@ -610,12 +611,12 @@ public class GUI extends JFrame
 		{
 			plugin = Model.getAnalysisPlugin(className);
 			pluginType = "Analyse";
-//			System.out.println("GUI.execute() analyse");
+			// System.out.println("GUI.execute() analyse");
 		} else if (Model.getViewPlugin(className) != null)
 		{
 			plugin = Model.getViewPlugin(className);
 			pluginType = "View";
-//			System.out.println("GUI.execute() view "+Model.getViewPlugin(className));
+			// System.out.println("GUI.execute() view "+Model.getViewPlugin(className));
 		}
 
 		if (plugin != null)
@@ -636,8 +637,7 @@ public class GUI extends JFrame
 						{
 							methods[i].invoke(pluginObject, GUI.this);
 						}
-					}
-					else
+					} else
 					{
 						if (methods[i].getName().equals("changerCouleur"))
 						{
@@ -683,6 +683,7 @@ public class GUI extends JFrame
 		}
 	}
 
+
 	public void reset()
 	{
 		GUI.this.dispose();
@@ -690,8 +691,39 @@ public class GUI extends JFrame
 		GUI myGUI = new GUI();
 	}
 
+
 	public static void main(String[] args)
 	{
 		GUI myGUI = new GUI();
+		Component[] comp = myGUI.getContentPane().getComponents();
+		for (int i = 0; i < comp.length; i++)
+		{
+			System.out.println("GUI.main() " + comp[i].getName());
+			if (comp[i].getName().equals("scrollPane"))
+			{
+				System.out.println("GUI.main() dans le scrollPane");
+				JScrollPane scroll = (JScrollPane) comp[i];
+				JViewport view = scroll.getViewport();
+				Component[] list = view.getComponents();
+				for (int j = 0; j < list.length; j++)
+				{
+					if (list[j].getName().equals("list"))
+					{
+
+						Image img;
+						try
+						{
+							img = ImageIO.read(new URL("http://www.fileminx.com/Theme/Icons/bmp.png"));
+							
+						} catch (IOException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+				}
+			}
+		}
 	}
 }

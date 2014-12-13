@@ -88,6 +88,9 @@ public class Model
 			return true;
 	}
 	
+	public static Object[] getContent(){
+		return Model.getContenu().toArray();
+	}
 	public static boolean isViewEmpty()
 	{
 		if(viewPlugins.size()!=0)
