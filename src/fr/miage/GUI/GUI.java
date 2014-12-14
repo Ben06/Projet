@@ -43,19 +43,20 @@ public class GUI extends JFrame
 
 	FileListing listing;
 	Model model = new Model();
-	private JList list;
+	JList list;
 	JScrollPane scrollPane;
 	RepositoryLoader repo = new RepositoryLoader();
+	private MouseAdapter mouseListener;
 	/**
-	 * liste déroulante contenant les différents plugins d'analyse présents dans le répertoire de plugins
+	 * liste dï¿½roulante contenant les diffï¿½rents plugins d'analyse prï¿½sents dans le rï¿½pertoire de plugins
 	 */
 	JComboBox analysisPlugins;
 	/**
-	 * liste déroulante contenant les différents plugins de vue présents dans le répertoire de plugins
+	 * liste dï¿½roulante contenant les diffï¿½rents plugins de vue prï¿½sents dans le rï¿½pertoire de plugins
 	 */
 	JComboBox viewPlugins;
 	/**
-	 * liste des plugins que l'utilisateur a appliqué depuis l'ouverture du logiciel
+	 * liste des plugins que l'utilisateur a appliquï¿½ depuis l'ouverture du logiciel
 	 */
 	String tmp = "";
 
@@ -94,7 +95,7 @@ public class GUI extends JFrame
 		this.setSize(500, 500);
 		getContentPane().setLayout(null);
 
-		// créer un nouveau dossier, dans le repertoire courant de l'explorateur
+		// crï¿½er un nouveau dossier, dans le repertoire courant de l'explorateur
 		JButton newFile = new JButton("New");
 		newFile.setName("newFile");
 		newFile.addActionListener(new ActionListener()
@@ -154,21 +155,20 @@ public class GUI extends JFrame
 		list = new JList(Model.getContenu().toArray());
 		list.setName("list");
 		list.setBounds(155, 76, 319, 205);
-
-		GUI.this.list.addMouseListener(new MouseAdapter()
+		mouseListener = (new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent evt)
 			{
 				if (SwingUtilities.isLeftMouseButton(evt))
 				{
 					JList list = (JList) evt.getSource();
-					if (evt.getClickCount() == 1) // selection d'un élément, utilisé pour la suppresion de fichier
+					if (evt.getClickCount() == 1) // selection d'un ï¿½lï¿½ment, utilisï¿½ pour la suppresion de fichier
 					{
 						int index = list.locationToIndex(evt.getPoint());
 						GUI.this.model.setSelectedFile(GUI.this.model.getContenu(index));
 
 					}
-					if (evt.getClickCount() == 2) // double clic sur un élément, exploration de son contenu
+					if (evt.getClickCount() == 2) // double clic sur un ï¿½lï¿½ment, exploration de son contenu
 					{
 						int index = list.locationToIndex(evt.getPoint());
 						if (GUI.this.model.getContenu(index).isDirectory())
@@ -177,7 +177,7 @@ public class GUI extends JFrame
 							{
 								CannotAccessErrorFrame error = null;
 								boolean result = listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
-								if (!result) // erreur, impossible d'accéder au dossier (dossier protégé / système)
+								if (!result) // erreur, impossible d'accï¿½der au dossier (dossier protï¿½gï¿½ / systï¿½me)
 									error = new CannotAccessErrorFrame();
 								else
 									rebuildList();
@@ -194,6 +194,8 @@ public class GUI extends JFrame
 			}
 		});
 
+		GUI.this.list.addMouseListener(mouseListener);
+		
 		scrollPane.setViewportView(list);
 		getContentPane().add(scrollPane);
 
@@ -270,7 +272,7 @@ public class GUI extends JFrame
 		getContentPane().add(btnAppliquerPlugins);
 
 		/**
-		 * liste déroulante contenant les différents plugins de vue présents dans le répertoire plugins
+		 * liste dï¿½roulante contenant les diffï¿½rents plugins de vue prï¿½sents dans le rï¿½pertoire plugins
 		 */
 
 		if (Model.viewPluginsNameToArray() != null)
@@ -377,7 +379,7 @@ public class GUI extends JFrame
 	}
 
 	/**
-	 * methode invoquant les différentes methodes des plugins permet d'appliquer les plugins sélectionnés par l'utilisateur
+	 * methode invoquant les diffï¿½rentes methodes des plugins permet d'appliquer les plugins sï¿½lectionnï¿½s par l'utilisateur
 	 */
 	public void executePlugins()
 	{
@@ -448,7 +450,7 @@ public class GUI extends JFrame
 //					System.out.println("GUI.executePlugins() dans le for analyse");
 					try
 					{
-//						System.out.println("GUI.executePlugins() nom de la méthode : "+methodsAnalysis[j].getName());
+//						System.out.println("GUI.executePlugins() nom de la mï¿½thode : "+methodsAnalysis[j].getName());
 						analyse = Model.getAnalysisPlugin().newInstance();
 						if (methodsAnalysis[j].getName().equals("trier"))
 						{
@@ -481,7 +483,7 @@ public class GUI extends JFrame
 	}
 
 	/**
-	 * reconstruit la liste contenant le contenu du dossier exploré afin de reconstruire la liste, on en crée une autre identique avec les nouvelles valeurs
+	 * reconstruit la liste contenant le contenu du dossier explorï¿½ afin de reconstruire la liste, on en crï¿½e une autre identique avec les nouvelles valeurs
 	 */
 	public void rebuildList()
 	{
@@ -499,65 +501,12 @@ public class GUI extends JFrame
 
 		GUI.this.list.clearSelection();
 
-		// GUI.this.scrollPane = new JScrollPane();
-		// GUI.this.scrollPane.setSize(305, 205);
-		// GUI.this.scrollPane.setLocation(155, 75);
-
 		scrollPane = new JScrollPane();
 		scrollPane.setName("scrollPane");
 		scrollPane.setSize(439, 205);
 		scrollPane.setLocation(21, 75);
-		// list = new JList(Model.getFileNames().toArray());
-		// list.setBounds(155, 76, 319, 205);
-		//
-		//
+
 		GUI.this.list.setListData(Model.getFileNames().toArray());
-		// GUI.this.list = new JList(Model.getFileNames().toArray());
-		// GUI.this.list.setBounds(155, 76, 319, 205);
-		// GUI.this.list.setName("list");
-		GUI.this.list.addMouseListener(new MouseAdapter()
-		{
-			public void mouseClicked(MouseEvent evt)
-			{
-				JList list = (JList) evt.getSource();
-				if (evt.getClickCount() == 1)
-				{
-					int index = list.locationToIndex(evt.getPoint());
-					GUI.this.model.setSelectedFile(GUI.this.model.getContenu(index));
-				}
-				if (evt.getClickCount() == 2)
-				{
-					int index = list.locationToIndex(evt.getPoint());
-					if (GUI.this.model.getContenu(index).isDirectory())
-					{
-						try
-						{
-							CannotAccessErrorFrame error = null;
-							boolean result = listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
-
-							if (result)
-								rebuildList();
-							else
-								error = new CannotAccessErrorFrame();
-
-						} catch (IOException e)
-						{
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} else
-					{
-						System.out.println("GUI.rebuildList().new MouseAdapter() {...}.mouseClicked() pas un repertoire!");
-					}
-
-				} else if (evt.getClickCount() == 3)
-				{ // Triple-click
-					int index = list.locationToIndex(evt.getPoint());
-
-				}
-			}
-
-		});
 
 		GUI.this.scrollPane.setViewportView(GUI.this.list);
 		GUI.this.getContentPane().add(scrollPane);
@@ -696,6 +645,16 @@ public class GUI extends JFrame
 	public FileListing getFileListing()
 	{
 		return this.listing;
+	}
+	
+	public JList getList()
+	{
+		return this.list;
+	}
+	
+	public MouseAdapter getMouseAdapter()
+	{
+		return this.mouseListener;
 	}
 
 	public static void main(String[] args)

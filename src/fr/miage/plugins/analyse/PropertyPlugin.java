@@ -1,15 +1,5 @@
 package fr.miage.plugins.analyse;
 
-/*
- Java Swing, 2nd Edition
- By Marc Loy, Robert Eckstein, Dave Wood, James Elliott, Brian Cole
- ISBN: 0-596-00408-7
- Publisher: O'Reilly 
- */
-// PopupMenuExample.java
-// A simple example of JPopupMenu. 
-//
-
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Point;
@@ -19,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,6 +36,8 @@ import fr.miage.Model.Model;
 public class PropertyPlugin implements IPluginAnalyse
 {
 
+	GUI myGUI;
+	JFrame proprietes;
 	@Override
 	public void trier(JFrame f)
 	{
@@ -54,6 +47,7 @@ public class PropertyPlugin implements IPluginAnalyse
 	@Override
 	public void ajouterDonees(GUI myGUI)
 	{
+		this.myGUI = myGUI;
 //		System.out.println("PropertyPlugin.ajouterDonees(...).MyPopUp.ajouterDonees() start");
 		Component[] comp = myGUI.getContentPane().getComponents();
 		for (int i = 0; i < comp.length; i++)
@@ -70,23 +64,31 @@ public class PropertyPlugin implements IPluginAnalyse
 					if (list[j].getName().equals("list"))
 					{
 
-						JList liste = (JList) list[j];
-						liste.addMouseListener(new MouseAdapter()
+//						JList liste = (JList) list[j];
+
+						PropertyPlugin.this.myGUI.getList().removeMouseListener(PropertyPlugin.this.myGUI.getMouseAdapter());
+//						MouseListener[] listener = PropertyPlugin.this.myGUI.getList().getMouseListeners();
+//						for (int k = 0; k<listener.length; k++)
+//						{
+//							System.out.println("Mouse listener de la liste : "+listener[k].toString());
+//							PropertyPlugin.this.myGUI.getList().removeMouseListener(listener[k]);
+//						}
+						PropertyPlugin.this.myGUI.getList().addMouseListener(new MouseAdapter()
 						{
 							public void mouseClicked(MouseEvent evt)
 							{
-								JPopupMenu popup;
+								final JPopupMenu popup;
 								popup = new JPopupMenu();
-								Point mouseLocation = myGUI.getMousePosition();
+								Point mouseLocation = PropertyPlugin.this.myGUI.getMousePosition();
 								if (SwingUtilities.isLeftMouseButton(evt))
 								{
 									JList list = (JList) evt.getSource();
-									if (evt.getClickCount() == 1) // selection d'un élément, utilisé pour la suppresion de fichier
+									if (evt.getClickCount() == 1) // selection d'un ï¿½lï¿½ment, utilisï¿½ pour la suppresion de fichier
 									{
 										int index = list.locationToIndex(evt.getPoint());
 										Model.setSelectedFile(Model.getContenu(index));
 									}
-									if (evt.getClickCount() == 2) // double clic sur un élément, exploration de son contenu
+									if (evt.getClickCount() == 2) // double clic sur un ï¿½lï¿½ment, exploration de son contenu
 									{
 										int index = list.locationToIndex(evt.getPoint());
 										if (Model.getContenu(index).isDirectory())
@@ -94,11 +96,11 @@ public class PropertyPlugin implements IPluginAnalyse
 											try
 											{
 												CannotAccessErrorFrame error = null;
-												boolean result = myGUI.getFileListing().setRepCourant(Model.getContenu(index).getCanonicalPath());
-												if (!result) // erreur, impossible d'accéder au dossier (dossier protégé / système)
+												boolean result = PropertyPlugin.this.myGUI.getFileListing().setRepCourant(Model.getContenu(index).getCanonicalPath());
+												if (!result) // erreur, impossible d'accï¿½der au dossier (dossier protï¿½gï¿½ / systï¿½me)
 													error = new CannotAccessErrorFrame();
 												else
-													myGUI.rebuildList();
+													PropertyPlugin.this.myGUI.rebuildList();
 											} catch (IOException e)
 											{
 												e.printStackTrace();
@@ -111,10 +113,10 @@ public class PropertyPlugin implements IPluginAnalyse
 								} else
 								{
 									
-									System.out.println("GUI.main(...).new MouseAdapter() {...}.mouseClicked() rightclick");
-									System.out.println("PropertyPlugin.ajouterDonees(...).new MouseAdapter() {...}.mouseClicked() mousepos : "+myGUI.getMousePosition());
+//									System.out.println("GUI.main(...).new MouseAdapter() {...}.mouseClicked() rightclick");
+//									System.out.println("PropertyPlugin.ajouterDonees(...).new MouseAdapter() {...}.mouseClicked() mousepos : "+PropertyPlugin.this.myGUI.getMousePosition());
 //									JPopupMenu popup;
-									JFrame proprietes = new JFrame();
+									PropertyPlugin.this.proprietes = new JFrame();
 
 									ActionListener menuListener = new ActionListener()
 									{
@@ -130,7 +132,7 @@ public class PropertyPlugin implements IPluginAnalyse
 											{
 												// proprietes = new JFrame();
 												if (Model.getFileToDelete() != null)
-													proprietes.setTitle("Propriétés de "+Model.getFileToDelete().getName());
+													proprietes.setTitle("Proprietes de "+Model.getFileToDelete().getName());
 												else
 													proprietes.setTitle("");
 												proprietes.setSize(330, 274);
@@ -218,7 +220,7 @@ public class PropertyPlugin implements IPluginAnalyse
 
 													lblCreated = new JLabel(attr.creationTime().toString());
 												} else
-													lblCreated = new JLabel("Date de création");
+													lblCreated = new JLabel("Date de creation");
 												lblCreated.setBounds(105, 169, 200, 14);
 												proprietes.getContentPane().add(lblCreated);
 												proprietes.setLocationRelativeTo(null);
@@ -238,7 +240,7 @@ public class PropertyPlugin implements IPluginAnalyse
 									item.addActionListener(menuListener);
 
 									popup.addSeparator();
-									popup.add(item = new JMenuItem("Propriétés"));
+									popup.add(item = new JMenuItem("Proprietes"));
 									item.addActionListener(menuListener);
 
 									popup.setLabel("Justification");
