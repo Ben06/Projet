@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import fr.miage.GUI.GUI;
 
 public class Model
 {
@@ -27,8 +28,7 @@ public class Model
 
 	public static List<String> fileNames = new ArrayList<>();
 	/**
-	 * fichier selectionné dans l'explorateur, utilisé pour la suppression de
-	 * fichier
+	 * fichier selectionné dans l'explorateur, utilisé pour la suppression de fichier
 	 */
 	public static File fileToDelete;
 
@@ -65,39 +65,57 @@ public class Model
 	 * utilisé pour revenir en arrière dans l'application des plugins
 	 */
 	private static JPanel lastPanel;
+	
+	private static GUI myGUI;
 
+	public static GUI getGUI(){
+		return myGUI;
+	}
 	
-	
+	public static void setGUI(GUI gui){
+		Model.myGUI=gui;
+	}
+	public static void refreshContenu()
+	{
+		Model.contenu.clear();
+		File[] listFile = Model.getRepCourant().listFiles();
+		for (int i = 0; i<listFile.length; i++)
+		{
+			Model.contenu.add(listFile[i]);
+		}
+	}
+
 	public static JPanel getLastPanel()
 	{
 		return lastPanel;
 	}
-
 
 	public static void setLastPanel(Container container)
 	{
 		Model.lastPanel = (JPanel) container;
 	}
 
-
 	public static boolean isAnalyseEmpty()
 	{
-		if(analysisPlugins.size()!=0)
+		if (analysisPlugins.size() != 0)
 			return false;
 		else
 			return true;
 	}
-	
-	public static Object[] getContent(){
+
+	public static Object[] getContent()
+	{
 		return Model.getContenu().toArray();
 	}
+
 	public static boolean isViewEmpty()
 	{
-		if(viewPlugins.size()!=0)
+		if (viewPlugins.size() != 0)
 			return false;
 		else
 			return true;
 	}
+
 	public static Class getFirstViewPlugin()
 	{
 		return viewPlugins.entrySet().iterator().next().getValue();
@@ -107,7 +125,7 @@ public class Model
 	{
 		return analysisPlugins.entrySet().iterator().next().getValue();
 	}
-	
+
 	public static String[] viewPluginsNameToArray()
 	{
 		String[] viewPluginsNames = new String[viewPlugins.size()];
@@ -119,7 +137,6 @@ public class Model
 		}
 		return viewPluginsNames;
 	}
-
 
 	public static String[] analysisPluginsNameToArray()
 	{
@@ -138,24 +155,20 @@ public class Model
 		return viewPlugins.get(name);
 	}
 
-
 	public static Class getAnalysisPlugin(String name)
 	{
 		return analysisPlugins.get(name);
 	}
-
 
 	public static void addViewPlugin(Class cl)
 	{
 		viewPlugins.put(cl.getName(), cl);
 	}
 
-
 	public static void addAnalysisPlugin(Class cl)
 	{
 		analysisPlugins.put(cl.getName(), cl);
 	}
-
 
 	public static Class getPlugin()
 	{
@@ -170,6 +183,7 @@ public class Model
 
 	/**
 	 * retourne le plugin de vue sélectionné dans la liste déroulante
+	 * 
 	 * @return
 	 */
 	public static Class getViewPlugin()
@@ -177,17 +191,16 @@ public class Model
 		return viewPlugin;
 	}
 
-
 	/**
 	 * retourne le plugin d'analyse sélectionné dans la liste déroulante
+	 * 
 	 * @return
 	 */
 	public static Class getAnalysisPlugin()
 	{
 		return analysisPlugin;
 	}
-	
-	
+
 	public static void setViewPlugin(Class viewPlugin)
 	{
 		Model.viewPlugin = viewPlugin;
@@ -197,7 +210,6 @@ public class Model
 	{
 		Model.analysisPlugin = analysisPlugin;
 	}
-
 
 	public static boolean isWindows()
 	{
@@ -217,6 +229,7 @@ public class Model
 
 	/**
 	 * transforme le chemin du plugin à chargé en nom de classe (accompagné du package)
+	 * 
 	 * @return
 	 */
 	public static String getPluginToLoadStr()
@@ -308,30 +321,25 @@ public class Model
 		return repCourant;
 	}
 
-
 	public static File getFileToDelete()
 	{
 		return fileToDelete;
 	}
-
 
 	public static void setFileToDelete(File fileToDelete)
 	{
 		Model.fileToDelete = fileToDelete;
 	}
 
-
 	public static File getPluginToLoad()
 	{
 		return pluginToLoad;
 	}
 
-
 	public static void setPluginToLoad(File pluginToLoad)
 	{
 		Model.pluginToLoad = pluginToLoad;
 	}
-
 
 	public static String getPluginClassName()
 	{
@@ -340,54 +348,45 @@ public class Model
 		return className;
 	}
 
-
 	public static void setSelectedFile(File selectedFile)
 	{
 		Model.fileToDelete = selectedFile;
 	}
-
 
 	public static List<String> getFileNames()
 	{
 		return fileNames;
 	}
 
-
 	public static void setFileNames(List<String> fileNames)
 	{
 		Model.fileNames = fileNames;
 	}
-
 
 	public static String getFileNames(int index)
 	{
 		return Model.fileNames.get(index);
 	}
 
-
 	public static void setRepCourant(File repCourant)
 	{
 		Model.repCourant = repCourant;
 	}
-
 
 	public static List<File> getContenu()
 	{
 		return contenu;
 	}
 
-
 	public static File getContenu(int index)
 	{
 		return contenu.get(index);
 	}
 
-
 	public static void setContenu(List<File> contenu)
 	{
 		Model.contenu = contenu;
 	}
-
 
 	public static void main(String[] args)
 	{

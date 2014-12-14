@@ -16,6 +16,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -24,14 +26,17 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
 
 import chargementDynamique.RepositoryLoader;
 import fr.miage.Model.Model;
 import fr.miage.fileListing.FileListing;
-
 
 public class GUI extends JFrame
 {
@@ -42,21 +47,17 @@ public class GUI extends JFrame
 	JScrollPane scrollPane;
 	RepositoryLoader repo = new RepositoryLoader();
 	/**
-	 * liste déroulante contenant les différents plugins d'analyse présents
-	 * dans le répertoire de plugins
+	 * liste déroulante contenant les différents plugins d'analyse présents dans le répertoire de plugins
 	 */
 	JComboBox analysisPlugins;
 	/**
-	 * liste déroulante contenant les différents plugins de vue présents
-	 * dans le répertoire de plugins
+	 * liste déroulante contenant les différents plugins de vue présents dans le répertoire de plugins
 	 */
 	JComboBox viewPlugins;
 	/**
-	 * liste des plugins que l'utilisateur a appliqué depuis l'ouverture du
-	 * logiciel
+	 * liste des plugins que l'utilisateur a appliqué depuis l'ouverture du logiciel
 	 */
 	String tmp = "";
-	
 
 	GUI()
 	{
@@ -70,7 +71,7 @@ public class GUI extends JFrame
 			if (Model.isWindows())
 				repo.parcours(new File("C:\\Plugins"));
 			else
-				repo.parcours(new File(System.getProperty( "user.home" )+"/Plugins"));
+				repo.parcours(new File(System.getProperty("user.home") + "/Plugins"));
 		} catch (NullPointerException npe)
 		{
 			if (Model.isWindows())
@@ -79,8 +80,8 @@ public class GUI extends JFrame
 				repo.parcours(new File("C:\\Plugins"));
 			} else
 			{
-				new File(System.getProperty( "user.home" )+"/Plugins").mkdir();
-				repo.parcours(new File(System.getProperty( "user.home" )+"/Plugins"));
+				new File(System.getProperty("user.home") + "/Plugins").mkdir();
+				repo.parcours(new File(System.getProperty("user.home") + "/Plugins"));
 			}
 		}
 
@@ -113,7 +114,6 @@ public class GUI extends JFrame
 		btnRemonter.addActionListener(new ActionListener()
 		{
 			CannotAccessErrorFrame error = null;
-
 
 			@Override
 			public void actionPerformed(ActionEvent arg0)
@@ -159,32 +159,36 @@ public class GUI extends JFrame
 		{
 			public void mouseClicked(MouseEvent evt)
 			{
-				JList list = (JList) evt.getSource();
-				if (evt.getClickCount() == 1) // selection d'un élément, utilisé pour la suppresion de fichier
+				if (SwingUtilities.isLeftMouseButton(evt))
 				{
-					int index = list.locationToIndex(evt.getPoint());
-					GUI.this.model.setSelectedFile(GUI.this.model.getContenu(index));
-				}
-				if (evt.getClickCount() == 2) // double clic sur un élément, exploration de son contenu
-				{
-					int index = list.locationToIndex(evt.getPoint());
-					if (GUI.this.model.getContenu(index).isDirectory())
+					JList list = (JList) evt.getSource();
+					if (evt.getClickCount() == 1) // selection d'un élément, utilisé pour la suppresion de fichier
 					{
-						try
+						int index = list.locationToIndex(evt.getPoint());
+						GUI.this.model.setSelectedFile(GUI.this.model.getContenu(index));
+
+					}
+					if (evt.getClickCount() == 2) // double clic sur un élément, exploration de son contenu
+					{
+						int index = list.locationToIndex(evt.getPoint());
+						if (GUI.this.model.getContenu(index).isDirectory())
 						{
-							CannotAccessErrorFrame error = null;
-							boolean result = listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
-							if (!result) // erreur, impossible d'accéder au dossier (dossier protégé / système)
-								error = new CannotAccessErrorFrame();
-							else
-								rebuildList();
-						} catch (IOException e)
+							try
+							{
+								CannotAccessErrorFrame error = null;
+								boolean result = listing.setRepCourant(GUI.this.model.getContenu(index).getCanonicalPath());
+								if (!result) // erreur, impossible d'accéder au dossier (dossier protégé / système)
+									error = new CannotAccessErrorFrame();
+								else
+									rebuildList();
+							} catch (IOException e)
+							{
+								e.printStackTrace();
+							}
+						} else
 						{
-							e.printStackTrace();
+							System.out.println("GUI.rebuildList().new MouseAdapter() {...}.mouseClicked() pas un repertoire!");
 						}
-					} else
-					{
-						System.out.println("GUI.rebuildList().new MouseAdapter() {...}.mouseClicked() pas un repertoire!");
 					}
 				}
 			}
@@ -252,8 +256,7 @@ public class GUI extends JFrame
 						tmp = "" + System.getProperty("line.separator") + "";
 				else if (Model.getAnalysisPlugin() != null)
 					if (Model.getViewPlugin() != null)
-						tmp += System.getProperty("line.separator") + Model.getAnalysisPlugin().getName() + System.getProperty("line.separator")
-								+ Model.getViewPlugin().getName();
+						tmp += System.getProperty("line.separator") + Model.getAnalysisPlugin().getName() + System.getProperty("line.separator") + Model.getViewPlugin().getName();
 					else
 						tmp += System.getProperty("line.separator") + Model.getAnalysisPlugin().getName() + System.getProperty("line.separator") + "";
 				else if (Model.getViewPlugin() != null)
@@ -267,8 +270,7 @@ public class GUI extends JFrame
 		getContentPane().add(btnAppliquerPlugins);
 
 		/**
-		 * liste déroulante contenant les différents plugins de vue présents
-		 * dans le répertoire plugins
+		 * liste déroulante contenant les différents plugins de vue présents dans le répertoire plugins
 		 */
 
 		if (Model.viewPluginsNameToArray() != null)
@@ -291,7 +293,6 @@ public class GUI extends JFrame
 			}
 		});
 		getContentPane().add(viewPlugins);
-
 
 		if (Model.analysisPluginsNameToArray() != null)
 		{
@@ -375,16 +376,15 @@ public class GUI extends JFrame
 		applyPreferences();
 	}
 
-
 	/**
-	 * methode invoquant les différentes methodes des plugins permet d'appliquer
-	 * les plugins sélectionnés par l'utilisateur
+	 * methode invoquant les différentes methodes des plugins permet d'appliquer les plugins sélectionnés par l'utilisateur
 	 */
 	public void executePlugins()
 	{
-		JPanel contentPane = (JPanel) GUI.this.getContentPane();
-		Model.setLastPanel(contentPane);
-
+		// JPanel contentPane = (JPanel) GUI.this.getContentPane();
+		// Model.setLastPanel(contentPane);
+		System.out.println("GUI.executePlugins() view : " + Model.getViewPlugin().getName());
+		System.out.println("GUI.executePlugins() Analyse : " + Model.getAnalysisPlugin().getName());
 		Method[] methodsView = null;
 		if (Model.getViewPlugin() != null)
 			methodsView = Model.getViewPlugin().getMethods();
@@ -400,7 +400,7 @@ public class GUI extends JFrame
 				try
 				{
 					Object view = Model.getViewPlugin().newInstance();
-					System.out.println(methodsView[i].getName());
+					// System.out.println(methodsView[i].getName());
 					if (methodsView[i].getName().equals("changerCouleur"))
 					{
 						methodsView[i].invoke(view, GUI.this);
@@ -445,14 +445,16 @@ public class GUI extends JFrame
 				for (int j = 0; j < methodsAnalysis.length; j++)
 				{
 					Object analyse;
+//					System.out.println("GUI.executePlugins() dans le for analyse");
 					try
 					{
+//						System.out.println("GUI.executePlugins() nom de la méthode : "+methodsAnalysis[j].getName());
 						analyse = Model.getAnalysisPlugin().newInstance();
 						if (methodsAnalysis[j].getName().equals("trier"))
 						{
 							methodsAnalysis[j].invoke(analyse, GUI.this);
 						}
-						if (methodsAnalysis[j].getName().equals("ajouterDonnees"))
+						if (methodsAnalysis[j].getName().equals("ajouterDonees"))
 						{
 							methodsAnalysis[j].invoke(analyse, GUI.this);
 						}
@@ -478,11 +480,8 @@ public class GUI extends JFrame
 		}
 	}
 
-
 	/**
-	 * reconstruit la liste contenant le contenu du dossier exploré afin de
-	 * reconstruire la liste, on en crée une autre identique avec les nouvelles
-	 * valeurs
+	 * reconstruit la liste contenant le contenu du dossier exploré afin de reconstruire la liste, on en crée une autre identique avec les nouvelles valeurs
 	 */
 	public void rebuildList()
 	{
@@ -567,7 +566,6 @@ public class GUI extends JFrame
 
 	}
 
-
 	public void applyPreferences()
 	{
 		BufferedReader br;
@@ -608,7 +606,6 @@ public class GUI extends JFrame
 
 	}
 
-
 	public void execute(String className)
 	{
 		Class plugin = null;
@@ -639,7 +636,7 @@ public class GUI extends JFrame
 						{
 							methods[i].invoke(pluginObject, GUI.this);
 						}
-						if (methods[i].getName().equals("ajouterDonnees"))
+						if (methods[i].getName().equals("ajouterDonees"))
 						{
 							methods[i].invoke(pluginObject, GUI.this);
 						}
@@ -689,7 +686,6 @@ public class GUI extends JFrame
 		}
 	}
 
-
 	public void reset()
 	{
 		GUI.this.dispose();
@@ -697,39 +693,14 @@ public class GUI extends JFrame
 		GUI myGUI = new GUI();
 	}
 
+	public FileListing getFileListing()
+	{
+		return this.listing;
+	}
 
 	public static void main(String[] args)
 	{
 		GUI myGUI = new GUI();
-		Component[] comp = myGUI.getContentPane().getComponents();
-		for (int i = 0; i < comp.length; i++)
-		{
-			System.out.println("GUI.main() " + comp[i].getName());
-			if (comp[i].getName().equals("scrollPane"))
-			{
-				System.out.println("GUI.main() dans le scrollPane");
-				JScrollPane scroll = (JScrollPane) comp[i];
-				JViewport view = scroll.getViewport();
-				Component[] list = view.getComponents();
-				for (int j = 0; j < list.length; j++)
-				{
-					if (list[j].getName().equals("list"))
-					{
 
-						Image img;
-						try
-						{
-							img = ImageIO.read(new URL("http://www.fileminx.com/Theme/Icons/bmp.png"));
-							
-						} catch (IOException e)
-						{
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-					}
-				}
-			}
-		}
 	}
 }

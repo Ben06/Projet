@@ -31,7 +31,7 @@ public class RepositoryLoader
 				if (listFiles[i].isDirectory())
 				{
 					parcours(listFiles[i]);
-				} else if (listFiles[i].getName().endsWith(".class"))
+				} else if (listFiles[i].getName().endsWith(".class") && !(listFiles[i].getName().contains("$")))
 				{
 					try
 					{

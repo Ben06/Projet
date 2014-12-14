@@ -12,7 +12,6 @@ import java.util.List;
 
 import fr.miage.Model.Model;
 
-
 // bug : lorsque l'on remonte jusqu'a c:, ou que l'on souhaite définir c: répertoire courant, on ne peut pas, à la place le repertoire courant
 // "." est ajouté à la place. A corriger par la suite.
 
@@ -37,7 +36,6 @@ public class FileListing
 	 */
 	String osName;
 
-
 	// au démarrage, afficher le contenu du dossier courant (default)
 	public FileListing()
 	{
@@ -52,7 +50,6 @@ public class FileListing
 		}
 	}
 
-
 	// ///////////////////////////////////////////////////////////////////
 	// ////////////////////////// Getters & Setters //////////////////////
 	// ///////////////////////////////////////////////////////////////////
@@ -62,18 +59,16 @@ public class FileListing
 		return this.repCourant;
 	}
 
-
 	public List<String> getFileNames()
 	{
 		return fileNames;
 	}
 
-
 	public boolean setRepCourant(String repCourant)
 	{
 		// System.out.println("FileListing.setRepCourant() repToChange : " +
 		// repCourant);
-		System.out.println("FileListing.setRepCourant() String repCourant (à changer) : "+repCourant);
+		System.out.println("FileListing.setRepCourant() String repCourant (à changer) : " + repCourant);
 		File repToChange = new File(repCourant);
 
 		if (repToChange.listFiles() == null)
@@ -100,12 +95,10 @@ public class FileListing
 		}
 	}
 
-
 	public List<File> getContenu()
 	{
 		return this.contenu;
 	}
-
 
 	// ///////////////////////////////////////////////////////////////////
 
@@ -120,21 +113,21 @@ public class FileListing
 		try
 		{
 			String currentPath = repCourant.getCanonicalPath();
-//			System.out.println("FileListing.remonter() " + System.getProperty("os.name"));
+			// System.out.println("FileListing.remonter() " + System.getProperty("os.name"));
 			if (osName.contains("windows"))
 			{
 				String[] folders = currentPath.split("\\\\");
-//				if(folders.length==1)
-//				{
-//					contenu.clear();
-//					fileNames.clear();
-//					File[] roots = File.listRoots();
-//					for (int i =0; i<roots.length; i++)
-//					{
-//						contenu.add(roots[i]);
-//					}
-//					return true;
-//				}
+				// if(folders.length==1)
+				// {
+				// contenu.clear();
+				// fileNames.clear();
+				// File[] roots = File.listRoots();
+				// for (int i =0; i<roots.length; i++)
+				// {
+				// contenu.add(roots[i]);
+				// }
+				// return true;
+				// }
 				String upPath = "";
 				for (int i = 0; i < folders.length - 1; i++)
 				{
@@ -143,15 +136,14 @@ public class FileListing
 					else
 						upPath += folders[i] + "\\";
 				}
-//				System.out.println("------------------------------- \n FileListing.remonter() " + upPath);
-				if(!upPath.contains("\\"))
+				// System.out.println("------------------------------- \n FileListing.remonter() " + upPath);
+				if (!upPath.contains("\\"))
 				{
-//					System.out.println("FileListing.remonter() plus de \\");
-					setRepCourant(upPath+"\\");
-				}
-				else
+					// System.out.println("FileListing.remonter() plus de \\");
+					setRepCourant(upPath + "\\");
+				} else
 					setRepCourant(upPath);
-//				System.out.println("FileListing.remonter() après le setRepCourant : " + repCourant.getCanonicalPath());
+				// System.out.println("FileListing.remonter() après le setRepCourant : " + repCourant.getCanonicalPath());
 				File[] listFiles = repCourant.listFiles();
 				contenu.clear();
 				fileNames.clear();
@@ -179,13 +171,13 @@ public class FileListing
 						upPath += folders[i] + "/";
 				}
 				System.out.println("------------------------------- \n FileListing.remonter() " + upPath);
-//				if(upPath.equals(System.getProperty("user.home")))
-//				{
-//					System.out.println("FileListing.remonter() plus de /");
-//					setRepCourant(upPath+"\\");
-//				}
-//				else
-//					setRepCourant(upPath);
+				// if(upPath.equals(System.getProperty("user.home")))
+				// {
+				// System.out.println("FileListing.remonter() plus de /");
+				// setRepCourant(upPath+"\\");
+				// }
+				// else
+				// setRepCourant(upPath);
 				setRepCourant(upPath);
 				System.out.println("FileListing.remonter() après le setRepCourant : " + repCourant.getCanonicalPath());
 				File[] listFiles = repCourant.listFiles();
@@ -210,6 +202,18 @@ public class FileListing
 		return false;
 	}
 
+	public void refreshContenu()
+	{
+		contenu.clear();
+		File[] listFiles=repCourant.listFiles();
+		for (int i = 0; i<listFiles.length; i++)
+		{
+			contenu.add(listFiles[i]);
+			
+		}
+		Model.setContenu(contenu);
+//		return false;
+	}
 
 	/**
 	 * Créer un dossier/fichier, dans le dossier courant
@@ -239,7 +243,6 @@ public class FileListing
 		return result;
 	}
 
-
 	public String toString()
 	{
 		String res = "";
@@ -250,29 +253,28 @@ public class FileListing
 		return res;
 	}
 
-
 	public static void main(String[] args) throws IOException
 	{
 		// FileListing list = null;
 		// list = new FileListing();
 		//
 		// list.setRepCourant(".");
-		/*
+
 		FileListing listing = new FileListing();
 		listing.setRepCourant("C:\\Plugins");
 		listing.remonter();
-		for (int i = 0; i<listing.getContenu().size(); i++)
+		for (int i = 0; i < listing.getContenu().size(); i++)
 		{
 			System.out.println(listing.getRepCourant());
 			System.out.println(listing.getContenu().get(i));
-			
-		}*/
-//
-//		File c = new File("C:\\");
-//		File[] listFiles = c.listFiles();
-//		for (int i = 0; i < listFiles.length; i++)
-//		{
-//			System.out.println(listFiles[i].getCanonicalPath());
-//		}
+
+		}
+		//
+		// File c = new File("C:\\");
+		// File[] listFiles = c.listFiles();
+		// for (int i = 0; i < listFiles.length; i++)
+		// {
+		// System.out.println(listFiles[i].getCanonicalPath());
+		// }
 	}
 }
