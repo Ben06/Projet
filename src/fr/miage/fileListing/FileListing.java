@@ -73,6 +73,7 @@ public class FileListing
 	{
 		// System.out.println("FileListing.setRepCourant() repToChange : " +
 		// repCourant);
+		System.out.println("FileListing.setRepCourant() String repCourant (à changer) : "+repCourant);
 		File repToChange = new File(repCourant);
 
 		if (repToChange.listFiles() == null)
@@ -119,10 +120,21 @@ public class FileListing
 		try
 		{
 			String currentPath = repCourant.getCanonicalPath();
-			System.out.println("FileListing.remonter() " + System.getProperty("os.name"));
+//			System.out.println("FileListing.remonter() " + System.getProperty("os.name"));
 			if (osName.contains("windows"))
 			{
 				String[] folders = currentPath.split("\\\\");
+//				if(folders.length==1)
+//				{
+//					contenu.clear();
+//					fileNames.clear();
+//					File[] roots = File.listRoots();
+//					for (int i =0; i<roots.length; i++)
+//					{
+//						contenu.add(roots[i]);
+//					}
+//					return true;
+//				}
 				String upPath = "";
 				for (int i = 0; i < folders.length - 1; i++)
 				{
@@ -131,9 +143,15 @@ public class FileListing
 					else
 						upPath += folders[i] + "\\";
 				}
-				System.out.println("------------------------------- \n FileListing.remonter() " + upPath);
-				setRepCourant(upPath);
-				System.out.println("FileListing.remonter() après le setRepCourant : " + repCourant.getCanonicalPath());
+//				System.out.println("------------------------------- \n FileListing.remonter() " + upPath);
+				if(!upPath.contains("\\"))
+				{
+//					System.out.println("FileListing.remonter() plus de \\");
+					setRepCourant(upPath+"\\");
+				}
+				else
+					setRepCourant(upPath);
+//				System.out.println("FileListing.remonter() après le setRepCourant : " + repCourant.getCanonicalPath());
 				File[] listFiles = repCourant.listFiles();
 				contenu.clear();
 				fileNames.clear();
@@ -161,6 +179,13 @@ public class FileListing
 						upPath += folders[i] + "/";
 				}
 				System.out.println("------------------------------- \n FileListing.remonter() " + upPath);
+//				if(upPath.equals(System.getProperty("user.home")))
+//				{
+//					System.out.println("FileListing.remonter() plus de /");
+//					setRepCourant(upPath+"\\");
+//				}
+//				else
+//					setRepCourant(upPath);
 				setRepCourant(upPath);
 				System.out.println("FileListing.remonter() après le setRepCourant : " + repCourant.getCanonicalPath());
 				File[] listFiles = repCourant.listFiles();
@@ -232,12 +257,22 @@ public class FileListing
 		// list = new FileListing();
 		//
 		// list.setRepCourant(".");
-
-		File c = new File("c:");
-		File[] listFiles = c.listFiles();
-		for (int i = 0; i < listFiles.length; i++)
+		/*
+		FileListing listing = new FileListing();
+		listing.setRepCourant("C:\\Plugins");
+		listing.remonter();
+		for (int i = 0; i<listing.getContenu().size(); i++)
 		{
-			System.out.println(listFiles[i].getCanonicalPath());
-		}
+			System.out.println(listing.getRepCourant());
+			System.out.println(listing.getContenu().get(i));
+			
+		}*/
+//
+//		File c = new File("C:\\");
+//		File[] listFiles = c.listFiles();
+//		for (int i = 0; i < listFiles.length; i++)
+//		{
+//			System.out.println(listFiles[i].getCanonicalPath());
+//		}
 	}
 }
