@@ -13,10 +13,10 @@ import java.io.OutputStream;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
-import chargementDynamique.MyClassLoader;
-import chargementDynamique.MyJar;
-import chargementDynamique.MyZip;
 import fr.miage.Model.Model;
+import fr.miage.chargementDynamique.MyClassLoader;
+import fr.miage.chargementDynamique.MyJar;
+import fr.miage.chargementDynamique.MyZip;
 
 
 public class SelectPluginFrame extends JFrame

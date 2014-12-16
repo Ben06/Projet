@@ -69,6 +69,7 @@ public class CustomizeList implements IPluginView
 		Component[] contentComponent = f.getContentPane().getComponents();
 		for (int i = 0; i < contentComponent.length; i++)
 		{
+			System.out.println("CustomizeList.customList() content["+i+"]"+contentComponent[i].getName());
 			if (contentComponent[i].getName().equals("scrollPane"))
 			{
 				// System.out.println("TestPluginView.customList() "+contentComponent[i].getName());

@@ -1,6 +1,5 @@
 package fr.miage.Model;
 
-import java.awt.Container;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,14 +7,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JPanel;
-
 import fr.miage.GUI.GUI;
+import fr.miage.chargementDynamique.PluginInvoker;
+import fr.miage.fileListing.FileListing;
 
 public class Model
 {
 
-	// public static FileListing list;
+	/**
+	 * Class permettant d'invoquer les différentes méthodes des plugins à charger
+	 */
+	public static PluginInvoker invoker;
 	/**
 	 * repertoire courant de l'explorateur
 	 */
@@ -60,13 +62,51 @@ public class Model
 	private static Class plugin;
 
 	private static String osName = System.getProperty("os.name").toLowerCase();
-
-	/**
-	 * utilisé pour revenir en arrière dans l'application des plugins
-	 */
-	private static JPanel lastPanel;
 	
 	private static GUI myGUI;
+
+	/**
+	 * chaîne de charactère regroupant les préférences de l'utilisateur
+	 */
+	private static String tmp;
+
+	private static FileListing listing;
+	
+	public static FileListing getListing()
+	{
+		return listing;
+	}
+
+	public static void setListing(FileListing listing)
+	{
+		Model.listing = listing;
+	}
+
+	public static PluginInvoker getInvoker()
+	{
+		return invoker;
+	}
+
+	public static void setInvoker(PluginInvoker invoker)
+	{
+		Model.invoker = invoker;
+	}
+
+	public static String getTmp()
+	{
+		return tmp;
+	}
+
+	public static void setTmp(String tmp)
+	{
+		Model.tmp = tmp;
+	}
+	
+	public static void concatTmp(String tmp)
+	{
+		Model.tmp += tmp;
+	}
+	
 
 	public static GUI getGUI(){
 		return myGUI;
@@ -74,25 +114,6 @@ public class Model
 	
 	public static void setGUI(GUI gui){
 		Model.myGUI=gui;
-	}
-	public static void refreshContenu()
-	{
-		Model.contenu.clear();
-		File[] listFile = Model.getRepCourant().listFiles();
-		for (int i = 0; i<listFile.length; i++)
-		{
-			Model.contenu.add(listFile[i]);
-		}
-	}
-
-	public static JPanel getLastPanel()
-	{
-		return lastPanel;
-	}
-
-	public static void setLastPanel(Container container)
-	{
-		Model.lastPanel = (JPanel) container;
 	}
 
 	public static boolean isAnalyseEmpty()
