@@ -342,4 +342,9 @@ public class GUI extends JFrame
 	{
 		return this.mouseListener;
 	}
+	
+	public void setMouseAdapter(MouseAdapter mouse)
+	{
+		this.mouseListener = mouse;
+	}
 }

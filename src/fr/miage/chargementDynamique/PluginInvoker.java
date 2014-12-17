@@ -34,112 +34,94 @@ public class PluginInvoker
 
 		if (methodsView != null)
 		{
-			if (methodsView.length != 5)// nombre de méthodes dans l'interface de plugin de vue
+			for (int i = 0; i < methodsView.length; i++)
 			{
-				ErrorModel.setPluginErrorCode(3);
-				ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
-				ErrorFrame error = new ErrorFrame();
-			}
-			else
-			{
-				for (int i = 0; i < methodsView.length; i++)
+				try
 				{
-					try
-					{
-						Object view = Model.getViewPlugin().newInstance();
+					Object view = Model.getViewPlugin().newInstance();
 
-						if (methodsView[i].getName().equals("changerCouleur"))
-						{
-							methodsView[i].invoke(view, this.myGUI);
-						}
-						if (methodsView[i].getName().equals("changerTaille"))
-						{
-							methodsView[i].invoke(view, this.myGUI);
-						}
-						if (methodsView[i].getName().equals("changerFormeBoutons"))
-						{
-							methodsView[i].invoke(view, this.myGUI);
-						}
-						if (methodsView[i].getName().equals("ajouterElement"))
-						{
-							methodsView[i].invoke(view, this.myGUI);
-						}
-						if (methodsView[i].getName().equals("customList"))
-						{
-							methodsView[i].invoke(view, this.myGUI);
-						}
-					} catch (InstantiationException e2)
+					if (methodsView[i].getName().equals("changerCouleur"))
 					{
-						ErrorModel.setPluginInternalErrorCode(1);
-						ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
-						ErrorFrame error = new ErrorFrame();
-					} catch (IllegalAccessException e2)
-					{
-						ErrorModel.setPluginInternalErrorCode(2);
-						ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
-						ErrorFrame error = new ErrorFrame();
-					} catch (IllegalArgumentException e1)
-					{
-						ErrorModel.setPluginInternalErrorCode(3);
-						ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
-						ErrorFrame error = new ErrorFrame();
-					} catch (InvocationTargetException e1)
-					{
-						ErrorModel.setPluginInternalErrorCode(4);
-						ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
-						ErrorFrame error = new ErrorFrame();
+						methodsView[i].invoke(view, this.myGUI);
 					}
-
+					if (methodsView[i].getName().equals("changerTaille"))
+					{
+						methodsView[i].invoke(view, this.myGUI);
+					}
+					if (methodsView[i].getName().equals("changerFormeBoutons"))
+					{
+						methodsView[i].invoke(view, this.myGUI);
+					}
+					if (methodsView[i].getName().equals("ajouterElement"))
+					{
+						methodsView[i].invoke(view, this.myGUI);
+					}
+					if (methodsView[i].getName().equals("customList"))
+					{
+						methodsView[i].invoke(view, this.myGUI);
+					}
+				} catch (InstantiationException e2)
+				{
+					ErrorModel.setPluginInternalErrorCode(1);
+					ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
+					ErrorFrame error = new ErrorFrame();
+				} catch (IllegalAccessException e2)
+				{
+					ErrorModel.setPluginInternalErrorCode(2);
+					ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
+					ErrorFrame error = new ErrorFrame();
+				} catch (IllegalArgumentException e1)
+				{
+					ErrorModel.setPluginInternalErrorCode(3);
+					ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
+					ErrorFrame error = new ErrorFrame();
+				} catch (InvocationTargetException e1)
+				{
+					ErrorModel.setPluginInternalErrorCode(4);
+					ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
+					ErrorFrame error = new ErrorFrame();
 				}
+
 			}
 		}
 		if (methodsAnalysis != null)
 		{
-			if (methodsAnalysis.length != 2)
+			for (int j = 0; j < methodsAnalysis.length; j++)
 			{
-				ErrorModel.setPluginErrorCode(3);
-				ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
-				ErrorFrame error = new ErrorFrame();
-			}
-			else
-			{
-				for (int j = 0; j < methodsAnalysis.length; j++)
+				Object analyse;
+				// System.out.println("GUI.executePlugins() dans le for analyse");
+				try
 				{
-					Object analyse;
-					// System.out.println("GUI.executePlugins() dans le for analyse");
-					try
+					// System.out.println("GUI.executePlugins() nom de la mï¿½thode : "+methodsAnalysis[j].getName());
+					analyse = Model.getAnalysisPlugin().newInstance();
+					if (methodsAnalysis[j].getName().equals("trier"))
 					{
-						// System.out.println("GUI.executePlugins() nom de la mï¿½thode : "+methodsAnalysis[j].getName());
-						analyse = Model.getAnalysisPlugin().newInstance();
-						if (methodsAnalysis[j].getName().equals("trier"))
-						{
-							methodsAnalysis[j].invoke(analyse, this.myGUI);
-						}
-						if (methodsAnalysis[j].getName().equals("ajouterDonees"))
-						{
-							methodsAnalysis[j].invoke(analyse, this.myGUI);
-						}
-					} catch (InstantiationException e)
-					{
-						ErrorModel.setPluginInternalErrorCode(1);
-						ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
-						ErrorFrame error = new ErrorFrame();
-					} catch (IllegalAccessException e)
-					{
-						ErrorModel.setPluginInternalErrorCode(2);
-						ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
-						ErrorFrame error = new ErrorFrame();
-					} catch (IllegalArgumentException e)
-					{
-						ErrorModel.setPluginInternalErrorCode(3);
-						ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
-						ErrorFrame error = new ErrorFrame();
-					} catch (InvocationTargetException e)
-					{
-						ErrorModel.setPluginInternalErrorCode(4);
-						ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
-						ErrorFrame error = new ErrorFrame();
+						methodsAnalysis[j].invoke(analyse, this.myGUI);
 					}
+					if (methodsAnalysis[j].getName().equals("ajouterDonees"))
+					{
+						methodsAnalysis[j].invoke(analyse, this.myGUI);
+					}
+				} catch (InstantiationException e)
+				{
+					ErrorModel.setPluginInternalErrorCode(1);
+					ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
+					ErrorFrame error = new ErrorFrame();
+				} catch (IllegalAccessException e)
+				{
+					ErrorModel.setPluginInternalErrorCode(2);
+					ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
+					ErrorFrame error = new ErrorFrame();
+				} catch (IllegalArgumentException e)
+				{
+					ErrorModel.setPluginInternalErrorCode(3);
+					ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
+					ErrorFrame error = new ErrorFrame();
+				} catch (InvocationTargetException e)
+				{
+					ErrorModel.setPluginInternalErrorCode(4);
+					ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
+					ErrorFrame error = new ErrorFrame();
 				}
 			}
 		}
@@ -230,11 +212,10 @@ public class PluginInvoker
 				ErrorModel.setPluginInternalErrorCode(1);
 				ErrorModel.setPluginNameProblem(plugin.getName());
 				ErrorFrame error = new ErrorFrame();
-//				ErrorModel.setInternalErrorLogs(e.printStackTrace());
+				// ErrorModel.setInternalErrorLogs(e.printStackTrace());
 			}
 
-		}
-		else
+		} else
 		{
 			ErrorModel.setPluginErrorCode(4);
 			ErrorModel.setPluginNameProblem(plugin.getName());
@@ -282,7 +263,7 @@ public class PluginInvoker
 			}
 		} catch (FileNotFoundException e)
 		{
-			
+
 		}
 
 	}
