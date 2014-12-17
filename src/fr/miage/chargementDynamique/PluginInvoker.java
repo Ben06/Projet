@@ -8,24 +8,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import fr.miage.GUI.GUI;
+import fr.miage.GUI.InternalErrorFrame;
+import fr.miage.GUI.ErrorFrame;
+import fr.miage.Model.ErrorModel;
 import fr.miage.Model.Model;
 
 public class PluginInvoker
 {
-	
+
 	GUI myGUI;
 
 	/**
-	 * methode invoquant les diffï¿½rentes methodes des plugins permet d'appliquer les plugins sï¿½lectionnï¿½s par l'utilisateur
-	 * à mettre dans chargement dynamique
+	 * methode invoquant les diffï¿½rentes methodes des plugins permet d'appliquer les plugins sï¿½lectionnï¿½s par l'utilisateur à mettre dans chargement dynamique
 	 */
 	public void executePlugins(GUI myGUI)
 	{
 		this.myGUI = myGUI;
-		// JPanel contentPane = (JPanel) GUI.this.getContentPane();
-		// Model.setLastPanel(contentPane);
-//		System.out.println("GUI.executePlugins() view : " + Model.getViewPlugin().getName());
-//		System.out.println("GUI.executePlugins() Analyse : " + Model.getAnalysisPlugin().getName());
 		Method[] methodsView = null;
 		if (Model.getViewPlugin() != null)
 			methodsView = Model.getViewPlugin().getMethods();
@@ -36,60 +34,82 @@ public class PluginInvoker
 
 		if (methodsView != null)
 		{
-			for (int i = 0; i < methodsView.length; i++)
+			if (methodsView.length != 5)// nombre de méthodes dans l'interface de plugin de vue
 			{
-				try
-				{
-					Object view = Model.getViewPlugin().newInstance();
-					// System.out.println(methodsView[i].getName());
-					if (methodsView[i].getName().equals("changerCouleur"))
-					{
-						methodsView[i].invoke(view, this.myGUI);
-					}
-					if (methodsView[i].getName().equals("changerTaille"))
-					{
-						methodsView[i].invoke(view, this.myGUI);
-					}
-					if (methodsView[i].getName().equals("changerFormeBoutons"))
-					{
-						methodsView[i].invoke(view, this.myGUI);
-					}
-					if (methodsView[i].getName().equals("ajouterElement"))
-					{
-						methodsView[i].invoke(view, this.myGUI);
-					}
-					if (methodsView[i].getName().equals("customList"))
-					{
-						methodsView[i].invoke(view, this.myGUI);
-					}
-				} catch (InstantiationException e2)
-				{
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				} catch (IllegalAccessException e2)
-				{
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				} catch (IllegalArgumentException e1)
-				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InvocationTargetException e1)
-				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
+				ErrorModel.setPluginErrorCode(3);
+				ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
+				ErrorFrame error = new ErrorFrame();
 			}
-			if (methodsAnalysis != null)
+			else
+			{
+				for (int i = 0; i < methodsView.length; i++)
+				{
+					try
+					{
+						Object view = Model.getViewPlugin().newInstance();
+
+						if (methodsView[i].getName().equals("changerCouleur"))
+						{
+							methodsView[i].invoke(view, this.myGUI);
+						}
+						if (methodsView[i].getName().equals("changerTaille"))
+						{
+							methodsView[i].invoke(view, this.myGUI);
+						}
+						if (methodsView[i].getName().equals("changerFormeBoutons"))
+						{
+							methodsView[i].invoke(view, this.myGUI);
+						}
+						if (methodsView[i].getName().equals("ajouterElement"))
+						{
+							methodsView[i].invoke(view, this.myGUI);
+						}
+						if (methodsView[i].getName().equals("customList"))
+						{
+							methodsView[i].invoke(view, this.myGUI);
+						}
+					} catch (InstantiationException e2)
+					{
+						ErrorModel.setPluginInternalErrorCode(1);
+						ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
+						ErrorFrame error = new ErrorFrame();
+					} catch (IllegalAccessException e2)
+					{
+						ErrorModel.setPluginInternalErrorCode(2);
+						ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
+						ErrorFrame error = new ErrorFrame();
+					} catch (IllegalArgumentException e1)
+					{
+						ErrorModel.setPluginInternalErrorCode(3);
+						ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
+						ErrorFrame error = new ErrorFrame();
+					} catch (InvocationTargetException e1)
+					{
+						ErrorModel.setPluginInternalErrorCode(4);
+						ErrorModel.setPluginNameProblem(Model.getViewPlugin().getName());
+						ErrorFrame error = new ErrorFrame();
+					}
+
+				}
+			}
+		}
+		if (methodsAnalysis != null)
+		{
+			if (methodsAnalysis.length != 2)
+			{
+				ErrorModel.setPluginErrorCode(3);
+				ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
+				ErrorFrame error = new ErrorFrame();
+			}
+			else
 			{
 				for (int j = 0; j < methodsAnalysis.length; j++)
 				{
 					Object analyse;
-//					System.out.println("GUI.executePlugins() dans le for analyse");
+					// System.out.println("GUI.executePlugins() dans le for analyse");
 					try
 					{
-//						System.out.println("GUI.executePlugins() nom de la mï¿½thode : "+methodsAnalysis[j].getName());
+						// System.out.println("GUI.executePlugins() nom de la mï¿½thode : "+methodsAnalysis[j].getName());
 						analyse = Model.getAnalysisPlugin().newInstance();
 						if (methodsAnalysis[j].getName().equals("trier"))
 						{
@@ -101,29 +121,33 @@ public class PluginInvoker
 						}
 					} catch (InstantiationException e)
 					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						ErrorModel.setPluginInternalErrorCode(1);
+						ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
+						ErrorFrame error = new ErrorFrame();
 					} catch (IllegalAccessException e)
 					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						ErrorModel.setPluginInternalErrorCode(2);
+						ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
+						ErrorFrame error = new ErrorFrame();
 					} catch (IllegalArgumentException e)
 					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						ErrorModel.setPluginInternalErrorCode(3);
+						ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
+						ErrorFrame error = new ErrorFrame();
 					} catch (InvocationTargetException e)
 					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						ErrorModel.setPluginInternalErrorCode(4);
+						ErrorModel.setPluginNameProblem(Model.getAnalysisPlugin().getName());
+						ErrorFrame error = new ErrorFrame();
 					}
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * execute les plugins lus dans le fichier de préférences
-	 * à mettre dans chargelment dynamique
+	 * execute les plugins lus dans le fichier de préférences à mettre dans chargelment dynamique
+	 * 
 	 * @param className
 	 */
 	public void execute(String className, GUI myGUI)
@@ -188,24 +212,36 @@ public class PluginInvoker
 
 			} catch (InstantiationException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ErrorModel.setPluginInternalErrorCode(1);
+				ErrorModel.setPluginNameProblem(plugin.getName());
+				ErrorFrame error = new ErrorFrame();
 			} catch (IllegalAccessException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ErrorModel.setPluginInternalErrorCode(2);
+				ErrorModel.setPluginNameProblem(plugin.getName());
+				ErrorFrame error = new ErrorFrame();
 			} catch (IllegalArgumentException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ErrorModel.setPluginInternalErrorCode(1);
+				ErrorModel.setPluginNameProblem(plugin.getName());
+				ErrorFrame error = new ErrorFrame();
 			} catch (InvocationTargetException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ErrorModel.setPluginInternalErrorCode(1);
+				ErrorModel.setPluginNameProblem(plugin.getName());
+				ErrorFrame error = new ErrorFrame();
+//				ErrorModel.setInternalErrorLogs(e.printStackTrace());
 			}
 
 		}
+		else
+		{
+			ErrorModel.setPluginErrorCode(4);
+			ErrorModel.setPluginNameProblem(plugin.getName());
+			ErrorFrame error = new ErrorFrame();
+		}
 	}
+
 	/**
 	 * charge les préférences de l'utilisateur à mettre dans chargement dynamique
 	 */
@@ -246,8 +282,9 @@ public class PluginInvoker
 			}
 		} catch (FileNotFoundException e)
 		{
+			
 		}
 
 	}
-	
+
 }

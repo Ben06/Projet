@@ -1,4 +1,4 @@
-package fr.miage.chargementDynamique;
+package chargementDynamique;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,11 +10,7 @@ import java.io.InputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-
-import fr.miage.Model.Model;
 
 
 public class MyJar
@@ -23,10 +19,8 @@ public class MyJar
 	public static byte[] readJar(File jarfile, String name) throws FileNotFoundException, IOException
 	{
 
-		JarFile jar = new JarFile(jarfile.getPath());
+		JarFile jar = new JarFile(jarfile);
 		JarInputStream jis = new JarInputStream(new BufferedInputStream(new FileInputStream(jarfile.getCanonicalFile())));
-
-		// extractions des entrées du fichiers zip (i.e. le contenu du zip)
 		JarEntry je = null;
 		try
 		{
@@ -34,28 +28,33 @@ public class MyJar
 			{
 				File f = new File(je.getName());
 
+				String chemin = name.replaceAll("\\.", "\\\\");
 				if (f.getPath().endsWith(".class")) // à modif par la suite
 				{
-					if (f.getPath().contains(name))
+					// modifier le chemin avant
+
+					if (f.getPath().contains(chemin))
+					// if(f.getPath().equals(anObject))) à modifier par la suite
 					{
-//						System.out.println("MyZip.unzip() trouvé " + f.getCanonicalPath());
+						System.out.println("MyJar.unzip() trouvé " + f.getPath());
 						InputStream in = jar.getInputStream(je);
 						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						// byte[] buf = new byte[1024];
 						int b;
 						while ((b = in.read()) != -1)
 						{
 							baos.write(b);
+							// baos.write(buf, 0, b);
 						}
 						return baos.toByteArray();
 					}
 				}
-
 			}
 		} finally
 		{
-			// fermeture de la ZipInputStream
 			jis.close();
 		}
+		// fermeture de la ZipInputStream
 		return null;
 	}
 
@@ -63,29 +62,27 @@ public class MyJar
 	public static String unjarGetPackage(File jarfile, String name) throws FileNotFoundException, IOException
 	{
 
-		JarFile jar = new JarFile(jarfile.getPath());
+		JarFile jar = new JarFile(jarfile);
 		JarInputStream jis = new JarInputStream(new BufferedInputStream(new FileInputStream(jarfile.getCanonicalFile())));
-
-		// extractions des entrées du fichiers zip (i.e. le contenu du zip)
 		JarEntry je = null;
 		try
 		{
 			while ((je = jis.getNextJarEntry()) != null)
 			{
-				// Pour chaque entrée, on crée un fichier
-				// dans le répertoire de sortie "folder"
 				File f = new File(je.getName());
+
+//				String chemin = name.replaceAll("\\.", "\\\\");
 				if (f.getPath().endsWith(".class")) // à modif par la suite
 				{
-//					System.out.println("MyZip.unzipGetPackage() f.getName="+f.getName());
 					// modifier le chemin avant
 					String packageName = "";
 					String fname = f.getName();
-//					System.out.println("MyZip.unzipGetPackage() name = "+name);
-//					System.out.println("MyZip.unzipGetPackage() "+fname+".contains("+name+")="+fname.contains(name));
-					if (fname.contains(name))
+					
+					if (f.getPath().contains(name))
+					// if(f.getPath().equals(anObject))) à modifier par la suite
 					{
-//						System.out.println("MyZip.unzip() trouvé " + f.getCanonicalPath());
+						System.out.println("MyJar.unzip() trouvé " + f.getPath());
+						System.out.println("MyZip.unzip() trouvé " + f.getCanonicalPath());
 						packageName = f.getParentFile().getCanonicalPath();
 						int pos = fname.lastIndexOf(".");
 						if (pos > 0)
@@ -95,42 +92,34 @@ public class MyJar
 //							System.out.println("MyZip.unzipGetPackage() fname "+fname);
 						}
 
-						if (f.getParentFile().getCanonicalPath().contains("\\Plugins\\") || f.getParentFile().getCanonicalPath().contains("/Plugins/") )
+						if (f.getParentFile().getCanonicalPath().contains("\\bin\\"))
 						{
 //							System.out.println("MyZip.unzipGetPackage() "+f.getParentFile().getCanonicalPath());
-							int binIndex;
-							if(Model.isWindows())
-								binIndex = f.getParentFile().getCanonicalPath().indexOf("\\Plugins\\");
-							else
-								binIndex = f.getParentFile().getCanonicalPath().indexOf("/Plugins/");
+							int binIndex = f.getParentFile().getCanonicalPath().indexOf("\\bin\\");
 							if (binIndex > 0)
 							{
 //								System.out.println("MyZip.unzipGetPackage() packageName : "+packageName);
 //								System.out.println("MyZip.unzipGetPackage() binIndex "+binIndex);
-								packageName = packageName.substring(binIndex+9);
-								if(Model.isWindows())
-									packageName = packageName.replaceAll("\\\\", "\\.");
-								else
-									packageName = packageName.replaceAll("/", "\\.");
+								packageName = packageName.substring(binIndex+5);
+								packageName = packageName.replaceAll("\\\\", "\\.");
 //								System.out.println("MyZip.unzip() packageName " + packageName);
 //								System.out.println("MyZip.unzipGetPackage() className : " + packageName +"."+fname);
 								return packageName +"."+fname;
 							}
 
-						} else if (f.getParentFile().getCanonicalPath().contains("\\Plugins") || f.getParentFile().getCanonicalPath().contains("/Plugins"))
+						} else if (f.getParentFile().getCanonicalPath().contains("\\bin"))
 						{
-//							System.out.println("MyZip.unzip() pas de package");
+							System.out.println("MyZip.unzip() pas de package");
 							return fname;
 						}
 					}
 				}
-
 			}
 		} finally
 		{
-			// fermeture de la ZipInputStream
 			jis.close();
 		}
+		// fermeture de la ZipInputStream
 		return null;
 	}
 }

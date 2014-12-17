@@ -1,11 +1,10 @@
-package fr.miage.chargementDynamique;
+package chargementDynamique;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import fr.miage.GUI.ErrorFrame;
-import fr.miage.Model.ErrorModel;
+import fr.miage.GUI.WrongPluginFrame;
 import fr.miage.Model.Model;
 
 
@@ -15,27 +14,6 @@ public class RepositoryLoader
 
 	static MyClassLoader mcl = new MyClassLoader();
 
-	public void init(){
-		try
-		{
-			if (Model.isWindows())
-				parcours(new File("C:\\Plugins"));
-			else
-				parcours(new File(System.getProperty("user.home") + "/Plugins"));
-		} catch (NullPointerException npe)
-		{
-			if (Model.isWindows())
-			{
-				new File("C:\\Plugins").mkdir();
-				parcours(new File("C:\\Plugins"));
-			} else
-			{
-				new File(System.getProperty("user.home") + "/Plugins").mkdir();
-				parcours(new File(System.getProperty("user.home") + "/Plugins"));
-			}
-		}
-
-	}
 
 	public boolean parcours(File base)
 	{
@@ -49,7 +27,7 @@ public class RepositoryLoader
 		{
 			for (int i = 0; i < listFiles.length; i++)
 			{
-//				System.out.println("RepositoryLoader.parcours() " + listFiles[i].getName());
+				System.out.println("RepositoryLoader.parcours() " + listFiles[i].getName());
 				if (listFiles[i].isDirectory())
 				{
 					parcours(listFiles[i]);
@@ -60,19 +38,19 @@ public class RepositoryLoader
 						String classPath = listFiles[i].getCanonicalPath();
 						int index = classPath.indexOf("Plugins");
 						String packageName = classPath.substring(index + 8);
-//						System.out.println("RepositoryLoader.parcours() packageName : " + packageName);
+						System.out.println("RepositoryLoader.parcours() packageName : " + packageName);
 						if (Model.isWindows())
 							packageName = packageName.replaceAll("\\\\", "\\.");
 						if (Model.isUnix())
 							packageName = packageName.replaceAll("/", "\\.");
 
-//						System.out.println("RepositoryLoader.parcours() packageName avec les points : " + packageName);
+						System.out.println("RepositoryLoader.parcours() packageName avec les points : " + packageName);
 
 						int classIndex = packageName.indexOf(".class");
 						if (classIndex > 0)
 						{
 							packageName = packageName.substring(0, classIndex);
-//							System.out.println("RepositoryLoader.parcours() packageName fini : " + packageName);
+							System.out.println("RepositoryLoader.parcours() packageName fini : " + packageName);
 						}
 						if (!(packageName.contains("IPluginAnalyse") || packageName.contains("IPluginView")))
 						{
@@ -92,33 +70,32 @@ public class RepositoryLoader
 									if (interfaces[j].getName().contains("IPluginView"))
 									{
 										Model.addViewPlugin(cl);
-//										System.out.println("Plugin de vue ajouté : " + cl.getName());
+										System.out.println("Plugin de vue ajouté : " + cl.getName());
 									} else if (interfaces[j].getName().contains("IPluginAnalyse"))
 									{
 										Model.addAnalysisPlugin(cl);
-//										System.out.println("Plugin d'analyse ajouté " + cl.getName());
+										System.out.println("Plugin d'analyse ajouté " + cl.getName());
 									}
 								}
 							} 
 						}
-//						else
-////							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
+						else
+							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
 					} catch (IOException e)
 					{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (ClassNotFoundException e)
 					{
-						ErrorModel.setPluginErrorCode(4);
-						ErrorModel.setPluginNameProblem(listFiles[i].getName());
-						ErrorFrame error = new ErrorFrame();
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				} else if (listFiles[i].getName().endsWith(".zip"))
 				{
 					MyZip zip = new MyZip();
 					try
 					{
-//						System.out.println("RepositoryLoader.parcours() dans le zip");
+						System.out.println("RepositoryLoader.parcours() dans le zip");
 						int index = listFiles[i].getName().indexOf(".zip");
 						String name="";
 						if (index>0)
@@ -139,16 +116,15 @@ public class RepositoryLoader
 								if (interfaces[j].getName().contains("IPluginView"))
 								{
 									Model.addViewPlugin(cl);
-//									System.out.println("Plugin de vue ajouté : " + cl.getName());
+									System.out.println("Plugin de vue ajouté : " + cl.getName());
 								} else if (interfaces[j].getName().contains("IPluginAnalyse"))
 								{
 									Model.addAnalysisPlugin(cl);
-//									System.out.println("Plugin d'analyse ajouté " + cl.getName());
+									System.out.println("Plugin d'analyse ajouté " + cl.getName());
 								}
 							}
-						}
-//						} else
-//							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
+						} else
+							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
 					} catch (FileNotFoundException e)
 					{
 						// TODO Auto-generated catch block
@@ -159,9 +135,8 @@ public class RepositoryLoader
 						e.printStackTrace();
 					} catch (ClassNotFoundException e)
 					{
-						ErrorModel.setPluginErrorCode(4);
-						ErrorModel.setPluginNameProblem(listFiles[i].getName());
-						ErrorFrame error = new ErrorFrame();
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					} 
 					
 				}
@@ -186,16 +161,15 @@ public class RepositoryLoader
 								if (interfaces[j].getName().contains("IPluginView"))
 								{
 									Model.addViewPlugin(cl);
-//									System.out.println("Plugin de vue ajouté : " + cl.getName());
+									System.out.println("Plugin de vue ajouté : " + cl.getName());
 								} else if (interfaces[j].getName().contains("IPluginAnalyse"))
 								{
 									Model.addAnalysisPlugin(cl);
-//									System.out.println("Plugin d'analyse ajouté " + cl.getName());
+									System.out.println("Plugin d'analyse ajouté " + cl.getName());
 								}
 							}
-						}
-//						} else
-//							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
+						} else
+							System.out.println("RepositoryLoader.parcours() interface, on ne la charge pas");
 					} catch (FileNotFoundException e)
 					{
 						// TODO Auto-generated catch block
@@ -206,9 +180,8 @@ public class RepositoryLoader
 						e.printStackTrace();
 					} catch (ClassNotFoundException e)
 					{
-						ErrorModel.setPluginErrorCode(4);
-						ErrorModel.setPluginNameProblem(listFiles[i].getName());
-						ErrorFrame error = new ErrorFrame();
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					} 
 				
 				}

@@ -35,6 +35,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import fr.miage.Model.Model;
+import fr.miage.chargementDynamique.PluginInvoker;
 import fr.miage.chargementDynamique.RepositoryLoader;
 import fr.miage.fileListing.FileListing;
 import fr.miage.listeners.AppliquerPluginListener;
@@ -62,8 +63,9 @@ public class GUI extends JFrame
 
 	public GUI()
 	{
-
-		// dans le main
+		Model.setRepCourant(Model.getListing().getRepCourant());
+		Model.setContenu(Model.getListing().getContenu());
+		Model.setFileNames(Model.getListing().getFileNames());
 
 		this.setTitle("Explorateur");
 		this.setSize(500, 500);
@@ -132,7 +134,7 @@ public class GUI extends JFrame
 		scrollPane.setName("scrollPane");
 		scrollPane.setSize(439, 205);
 		scrollPane.setLocation(21, 75);
-		list = new JList(Model.getContenu().toArray());
+		list = new JList(Model.getFileNames().toArray());
 		list.setName("list");
 		list.setBounds(155, 76, 319, 205);
 
@@ -287,6 +289,11 @@ public class GUI extends JFrame
 		Model.setContenu(Model.getListing().getContenu());
 		Model.setFileNames(Model.getListing().getFileNames());
 
+		if (!Model.isViewEmpty())
+			Model.setViewPlugin(Model.getFirstViewPlugin());
+		if (!Model.isAnalyseEmpty())
+			Model.setAnalysisPlugin(Model.getFirstAnalysisPlugin());
+		
 		try
 		{
 			lblPathCourant.setText(Model.getRepCourant().getCanonicalPath());
@@ -323,6 +330,7 @@ public class GUI extends JFrame
 		GUI.this.dispose();
 		new File("preferences.txt").delete();
 		GUI myGUI = new GUI();
+		Model.setGUI(myGUI);
 	}
 
 	public JList getList()

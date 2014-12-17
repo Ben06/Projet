@@ -53,12 +53,12 @@ public class PropertyPlugin implements IPluginAnalyse
 		Component[] comp = myGUI.getContentPane().getComponents();
 		for (int i = 0; i < comp.length; i++)
 		{
-			System.out.println("GUI.main() " + comp[i].getName());
+//			System.out.println("GUI.main() " + comp[i].getName());
 			if (comp[i].getName() != null)
 			{
 				if (comp[i].getName().equals("scrollPane"))
 				{
-					System.out.println("GUI.main() dans le scrollPane");
+					
 					JScrollPane scroll = (JScrollPane) comp[i];
 					JViewport view = scroll.getViewport();
 					Component[] list = view.getComponents();
@@ -70,19 +70,13 @@ public class PropertyPlugin implements IPluginAnalyse
 							// JList liste = (JList) list[j];
 
 							PropertyPlugin.this.myGUI.getList().removeMouseListener(PropertyPlugin.this.myGUI.getMouseAdapter());
-							System.out.println("PropertyPlugin.ajouterDonees() listener enlevé");
+//							System.out.println("PropertyPlugin.ajouterDonees() listener enlevé");
 
-							// MouseListener[] listener = PropertyPlugin.this.myGUI.getList().getMouseListeners();
-							// for (int k = 0; k<listener.length; k++)
-							// {
-							// System.out.println("Mouse listener de la liste : "+listener[k].toString());
-							// PropertyPlugin.this.myGUI.getList().removeMouseListener(listener[k]);
-							// }
 							PropertyPlugin.this.myGUI.getList().addMouseListener(new MouseAdapter()
 							{
 								public void mouseClicked(MouseEvent evt)
 								{
-									System.out.println("PropertyPlugin.ajouterDonees(...).new MouseAdapter() {...}.mouseClicked() début");
+//									System.out.println("PropertyPlugin.ajouterDonees(...).new MouseAdapter() {...}.mouseClicked() début");
 									final JPopupMenu popup;
 									popup = new JPopupMenu();
 									Point mouseLocation = PropertyPlugin.this.myGUI.getMousePosition();
@@ -118,10 +112,6 @@ public class PropertyPlugin implements IPluginAnalyse
 										}
 									} else
 									{
-
-										// System.out.println("GUI.main(...).new MouseAdapter() {...}.mouseClicked() rightclick");
-										// System.out.println("PropertyPlugin.ajouterDonees(...).new MouseAdapter() {...}.mouseClicked() mousepos : "+PropertyPlugin.this.myGUI.getMousePosition());
-										// JPopupMenu popup;
 										PropertyPlugin.this.proprietes = new JFrame();
 
 										ActionListener menuListener = new ActionListener()
@@ -283,7 +273,7 @@ public class PropertyPlugin implements IPluginAnalyse
 										}
 										popup.setLocation(evt.getXOnScreen(), evt.getYOnScreen());
 										popup.setVisible(true);
-										System.out.println("PropertyPlugin.ajouterDonees(...).new MouseAdapter() {...}.mouseClicked() fin");
+//										System.out.println("PropertyPlugin.ajouterDonees(...).new MouseAdapter() {...}.mouseClicked() fin");
 									}
 								}
 							});

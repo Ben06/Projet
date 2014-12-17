@@ -23,10 +23,6 @@ public class Main
 			Model.setViewPlugin(Model.getFirstViewPlugin());
 		if (!Model.isAnalyseEmpty())
 			Model.setAnalysisPlugin(Model.getFirstAnalysisPlugin());
-
-		Model.setRepCourant(Model.getListing().getRepCourant());
-		Model.setContenu(Model.getListing().getContenu());
-		Model.setFileNames(Model.getListing().getFileNames());
 		
 		GUI myGUI = new GUI();
 		Model.setGUI(myGUI);
