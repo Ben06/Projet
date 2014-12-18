@@ -18,7 +18,7 @@ public class SuppressConfirmation extends JFrame
 	{
 		getContentPane().setLayout(null);
 		this.setSize(455, 135);
-		JLabel lblEtesVousSur = new JLabel("Etes vous sur de vouloir supprimer "+Model.getSelectedFile().getName()+" d\u00E9finitivement ?");
+		JLabel lblEtesVousSur = new JLabel("Etes vous sur de vouloir supprimer "+Model.getFileToDelete().getName()+" d\u00E9finitivement ?");
 		lblEtesVousSur.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblEtesVousSur.setBounds(10, 22, 457, 23);
 		getContentPane().add(lblEtesVousSur);
@@ -30,7 +30,7 @@ public class SuppressConfirmation extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				Model.getSelectedFile().delete();
+				Model.getFileToDelete().delete();
 				SuppressConfirmation.this.dispose();
 			}
 		});
@@ -49,7 +49,7 @@ public class SuppressConfirmation extends JFrame
 		});
 		getContentPane().add(btnNon);
 		
-		
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		
 	}

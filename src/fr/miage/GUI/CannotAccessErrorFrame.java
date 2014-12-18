@@ -39,7 +39,7 @@ public class CannotAccessErrorFrame extends JFrame
 		});
 		
 		getContentPane().add(btnOk);
-		
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
 	

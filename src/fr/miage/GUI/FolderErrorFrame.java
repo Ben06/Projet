@@ -29,6 +29,7 @@ public class FolderErrorFrame extends JFrame {
 		btnNewButton.setBounds(217, 11, 57, 31);
 		getContentPane().add(btnNewButton);
 		this.setVisible(true);
+		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	

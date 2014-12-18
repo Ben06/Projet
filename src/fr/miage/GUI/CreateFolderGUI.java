@@ -20,6 +20,7 @@ public class CreateFolderGUI extends JFrame {
 	String fileName="";
 	Model model = new Model();
 	FileListing list = new FileListing();
+	JTextArea textArea;
 	
 	public CreateFolderGUI() {
 		setTitle("Cr\u00E9ation d'un dossier");
@@ -28,7 +29,11 @@ public class CreateFolderGUI extends JFrame {
 		JLabel lblNomDuDossier = new JLabel("Nom du dossier");
 		lblNomDuDossier.setBounds(10, 30, 84, 14);
 		getContentPane().add(lblNomDuDossier);
+<<<<<<< HEAD
 		final JTextArea textArea = new JTextArea();
+=======
+		textArea = new JTextArea();
+>>>>>>> 0c0cdd195997b40c4bf57cf2667153ac7af4bef8
 		textArea.setBounds(99, 25, 235, 28);
 		getContentPane().add(textArea);
 		
@@ -56,6 +61,7 @@ public class CreateFolderGUI extends JFrame {
 		btnCrer.setBounds(161, 64, 89, 23);
 		getContentPane().add(btnCrer);
 		this.setVisible(true);
+		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	
