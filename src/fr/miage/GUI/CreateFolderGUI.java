@@ -28,7 +28,7 @@ public class CreateFolderGUI extends JFrame {
 		JLabel lblNomDuDossier = new JLabel("Nom du dossier");
 		lblNomDuDossier.setBounds(10, 30, 84, 14);
 		getContentPane().add(lblNomDuDossier);
-		JTextArea textArea = new JTextArea();
+		final JTextArea textArea = new JTextArea();
 		textArea.setBounds(99, 25, 235, 28);
 		getContentPane().add(textArea);
 		
