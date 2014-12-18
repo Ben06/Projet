@@ -34,7 +34,8 @@ public class RepositoryLoader
 				parcours(new File(System.getProperty("user.home") + "/Plugins"));
 			}
 		}
-
+		
+		File f = new File("tmp.txt");
 	}
 
 	public boolean parcours(File base)

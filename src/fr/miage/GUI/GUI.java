@@ -1,50 +1,34 @@
 package fr.miage.GUI;
 
-import java.awt.Component;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
-import javax.swing.border.BevelBorder;
 
 import fr.miage.Model.Model;
-import fr.miage.chargementDynamique.PluginInvoker;
-import fr.miage.chargementDynamique.RepositoryLoader;
-import fr.miage.fileListing.FileListing;
 import fr.miage.listeners.AppliquerPluginListener;
 import fr.miage.listeners.BtnDeleteListener;
 import fr.miage.listeners.BtnPluginListener;
 import fr.miage.listeners.ListListener;
 import fr.miage.listeners.SauvegarderListener;
 
-public class GUI extends JFrame
+public class GUI extends JFrame implements Serializable
 {
 
 	JList list;
@@ -251,6 +235,7 @@ public class GUI extends JFrame
 			public void actionPerformed(ActionEvent e)
 			{
 				reset();
+//				deletePlugin();
 			}
 		};
 
@@ -268,7 +253,7 @@ public class GUI extends JFrame
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		lblPathCourant.setBounds(23, 45, 297, 14);
+		lblPathCourant.setBounds(23, 45, 400, 14);
 		lblPathCourant.setName("lblPathCourant");
 		getContentPane().add(lblPathCourant);
 
@@ -324,15 +309,64 @@ public class GUI extends JFrame
 		GUI.this.getContentPane().repaint();
 
 	}
-
+	
 	public void reset()
 	{
 		GUI.this.dispose();
 		new File("preferences.txt").delete();
 		GUI myGUI = new GUI();
 		Model.setGUI(myGUI);
-	}
+		
+//		GUI.this.dispose();
+//		GUI myGUI = new GUI();
+//		Model.setGUI(myGUI);
+//		BufferedReader br;
+//		try
+//		{
+//			br = new BufferedReader(new FileReader("tmp.txt"));
+//			try
+//			{
+//				StringBuilder sb = new StringBuilder();
+//				String line = br.readLine();
+//				int count = 1;
+//				while (line != null)
+//				{
+//					sb.append(line);
+//					sb.append(System.lineSeparator());
+//					line = br.readLine();
+//					if (line != "")
+//					{
+//						System.out.println("GUI.reset() count : "+count+", stateNumber : "+Model.getStateNumber()+", line : "+line);
+//						if(!(count == Model.getStateNumber()-1))
+//							Model.getInvoker().execute(line, Model.getGUI());
+//						else
+//							System.out.println("GUI.reset() count == ModelgetStateNumber()-1");
+//					}
+//					count++;
+//				}
+//				Model.setStateNumber(Model.getStateNumber()-1);
+//			} catch (IOException e)
+//			{
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} finally
+//			{
+//				try
+//				{
+//					br.close();
+//				} catch (IOException e)
+//				{
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		} catch (FileNotFoundException e)
+//		{
+//
+//		}
 
+	}
+	
 	public JList getList()
 	{
 		return this.list;

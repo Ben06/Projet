@@ -72,6 +72,32 @@ public class Model
 
 	private static FileListing listing;
 	
+	private static int stateNumber=0;
+	
+	private static ArrayList<GUI> guiStates;
+	
+	
+	public static int getStateNumber()
+	{
+		return Model.stateNumber;
+	}
+	
+	public static void setStateNumber(int i)
+	{
+		Model.stateNumber = i;
+	}
+	
+	public static void addStates(GUI gui)
+	{
+		Model.guiStates.add(gui);
+	}
+	
+	public static GUI getStates(int index)
+	{
+		return Model.guiStates.get(index);
+	}
+	
+	
 	public static FileListing getListing()
 	{
 		return listing;

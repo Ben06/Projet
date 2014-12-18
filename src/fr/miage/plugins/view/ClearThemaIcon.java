@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -49,13 +50,14 @@ public class ClearThemaIcon implements IPluginView
 		for (int i = 0; i < components.length; i++)
 		{
 
-			System.out.println("ClearThema.changerFormeBoutons() " + components[i].getName());
+//			System.out.println("ClearThema.changerFormeBoutons() " + components[i].getName());
 
 			if (components[i].getName().equals("btnHome"))
 			{
 
+//				System.out.println("ClearThemaIcon.changerFormeBoutons() btnHome, ressources exists ? "+new File("classes/test/ressources/home1.png").exists());
 				((JButton) components[i]).setText("");
-				((JButton) components[i]).setIcon(new ImageIcon("Img/home1.png"));
+				((JButton) components[i]).setIcon(new ImageIcon("./test-classes/home1.png"));
 
 				components[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
 				components[i].setBackground(Color.decode("#d35400"));
@@ -72,7 +74,7 @@ public class ClearThemaIcon implements IPluginView
 			{
 
 				((JButton) components[i]).setText("");
-				((JButton) components[i]).setIcon(new ImageIcon("Img/directory1.png"));
+				((JButton) components[i]).setIcon(new ImageIcon("./test-classes/directory1.png"));
 
 				components[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
 				components[i].setBackground(Color.decode("#d35400"));
@@ -87,7 +89,7 @@ public class ClearThemaIcon implements IPluginView
 			{
 
 				((JButton) components[i]).setText("");
-				((JButton) components[i]).setIcon(new ImageIcon("Img/buttonarrowup1.png"));
+				((JButton) components[i]).setIcon(new ImageIcon("./test-classes/buttonarrowup1.png"));
 
 				components[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
 				components[i].setBackground(Color.decode("#d35400"));
@@ -102,7 +104,7 @@ public class ClearThemaIcon implements IPluginView
 			{
 
 				((JButton) components[i]).setText("");
-				((JButton) components[i]).setIcon(new ImageIcon("Img/delete1.gif"));
+				((JButton) components[i]).setIcon(new ImageIcon("./test-classes/delete1.gif"));
 
 				components[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
 				components[i].setBackground(Color.decode("#d35400"));
@@ -116,7 +118,7 @@ public class ClearThemaIcon implements IPluginView
 			{
 
 				((JButton) components[i]).setText("");
-				((JButton) components[i]).setIcon(new ImageIcon("Img/add1.png"));
+				((JButton) components[i]).setIcon(new ImageIcon("./test-classes/add1.png"));
 
 				components[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
 				components[i].setBackground(Color.decode("#d35400"));
@@ -131,7 +133,7 @@ public class ClearThemaIcon implements IPluginView
 			{
 
 				((JButton) components[i]).setText("");
-				((JButton) components[i]).setIcon(new ImageIcon("Img/tick1.png"));
+				((JButton) components[i]).setIcon(new ImageIcon("./test-classes/tick1.png"));
 
 				components[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
 				components[i].setBackground(Color.decode("#d35400"));
@@ -146,7 +148,7 @@ public class ClearThemaIcon implements IPluginView
 			{
 
 				((JButton) components[i]).setText("");
-				((JButton) components[i]).setIcon(new ImageIcon("Img/save1.png"));
+				((JButton) components[i]).setIcon(new ImageIcon("./test-classes/save1.png"));
 
 				components[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
 				components[i].setBackground(Color.decode("#d35400"));
@@ -161,7 +163,7 @@ public class ClearThemaIcon implements IPluginView
 			{
 
 				((JButton) components[i]).setText("");
-				((JButton) components[i]).setIcon(new ImageIcon("Img/reset1.png"));
+				((JButton) components[i]).setIcon(new ImageIcon("./test-classes/reset1.png"));
 
 				components[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
 				components[i].setBackground(Color.decode("#d35400"));
@@ -176,7 +178,7 @@ public class ClearThemaIcon implements IPluginView
 
 				((JLabel) components[i]).setText("");
 				((JLabel) components[i]).setBounds(70, 309, 151, 14);
-				((JLabel) components[i]).setIcon(new ImageIcon("Img/vue.png"));
+				((JLabel) components[i]).setIcon(new ImageIcon("./test-classes/vue.png"));
 
 				components[i].setForeground(Color.decode("#e74c3c"));
 
@@ -191,7 +193,8 @@ public class ClearThemaIcon implements IPluginView
 
 				((JLabel) components[i]).setText("");
 				((JLabel) components[i]).setBounds(70, 349, 121, 14);
-				((JLabel) components[i]).setIcon(new ImageIcon("Img/file.png"));
+				System.out.println("ClearThemaIcon.changerFormeBoutons() file exists ? ");
+				((JLabel) components[i]).setIcon(new ImageIcon("./test-classes/file.png"));
 
 				components[i].setForeground(Color.decode("#d35400"));
 				// components[i].setForeground(Color.decode("#d35400"));

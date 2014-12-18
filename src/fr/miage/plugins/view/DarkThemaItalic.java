@@ -68,7 +68,7 @@ public class DarkThemaItalic implements IPluginView {
 			 		 
 					
 					((JButton)components[i]).setText("");
-					((JButton)components[i]).setIcon(new ImageIcon("Img/home1.png"));
+					((JButton)components[i]).setIcon(new ImageIcon("./test-classes/home1.png"));
 			 		
 			 		
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
@@ -88,7 +88,7 @@ public class DarkThemaItalic implements IPluginView {
 			 		 
 					
 					((JButton)components[i]).setText("");
-					((JButton)components[i]).setIcon(new ImageIcon("Img/directory1.png"));
+					((JButton)components[i]).setIcon(new ImageIcon("./test-classes/directory1.png"));
 					
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#2980b9"));
@@ -103,7 +103,7 @@ public class DarkThemaItalic implements IPluginView {
 			 		 
 					
 					((JButton)components[i]).setText("");
-					((JButton)components[i]).setIcon(new ImageIcon("Img/buttonarrowup1.png"));
+					((JButton)components[i]).setIcon(new ImageIcon("./test-classes/buttonarrowup1.png"));
 					
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#2980b9"));
@@ -119,7 +119,7 @@ public class DarkThemaItalic implements IPluginView {
 			 		 
 					
 					((JButton)components[i]).setText("");
-					((JButton)components[i]).setIcon(new ImageIcon("Img/delete1.gif"));
+					((JButton)components[i]).setIcon(new ImageIcon("./test-classes/delete1.gif"));
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#2980b9"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
@@ -134,7 +134,7 @@ public class DarkThemaItalic implements IPluginView {
  
 					
 					((JButton)components[i]).setText("");
-					((JButton)components[i]).setIcon(new ImageIcon("Img/add1.png"));
+					((JButton)components[i]).setIcon(new ImageIcon("./test-classes/add1.png"));
 			 		components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#2980b9"));
 			 		components[i].setForeground(Color.decode("#ecf0f1"));
@@ -150,7 +150,7 @@ public class DarkThemaItalic implements IPluginView {
 			 		 
 					
 					((JButton)components[i]).setText("");
-					((JButton)components[i]).setIcon(new ImageIcon("Img/tick1.png"));
+					((JButton)components[i]).setIcon(new ImageIcon("./test-classes/tick1.png"));
 			 		
 					components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#2980b9"));
@@ -166,7 +166,7 @@ public class DarkThemaItalic implements IPluginView {
 			 		 
 					
 					((JButton)components[i]).setText("");
-					((JButton)components[i]).setIcon(new ImageIcon("Img/save1.png"));
+					((JButton)components[i]).setIcon(new ImageIcon("./test-classes/save1.png"));
 			 		
 					components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 			 		components[i].setBackground(Color.decode("#2980b9"));
@@ -183,7 +183,7 @@ public class DarkThemaItalic implements IPluginView {
 			 		 
 					
 					((JButton)components[i]).setText("");
-					((JButton)components[i]).setIcon(new ImageIcon("Img/reset1.png"));
+					((JButton)components[i]).setIcon(new ImageIcon("./test-classes/reset1.png"));
 			 		
 					components[i].setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 					components[i].setBackground(Color.decode("#2980b9"));
@@ -199,7 +199,7 @@ if(components[i].getName().equals("lblPluginsDeVue")){
 	
 	((JLabel)components[i]).setText("");
 	((JLabel)components[i]).setBounds(70, 309, 151, 14);
-	((JLabel)components[i]).setIcon(new ImageIcon("Img/vue.png"));
+	((JLabel)components[i]).setIcon(new ImageIcon("./test-classes/vue.png"));
 			 		
 	components[i].setForeground(Color.decode("#2980b9"));
 			 		components[i].setFont(myFont);
@@ -211,7 +211,7 @@ if(components[i].getName().equals("lblPluginsDeVue")){
 					
 					((JLabel)components[i]).setText("");
 					((JLabel)components[i]).setBounds(70, 349, 121, 14);
-					((JLabel)components[i]).setIcon(new ImageIcon("Img/file.png"));
+					((JLabel)components[i]).setIcon(new ImageIcon("./test-classes/file.png"));
 			 		
 					components[i].setForeground(Color.decode("#2980b9"));
 			 		components[i].setFont(myFont);

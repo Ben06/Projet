@@ -214,13 +214,20 @@ public class PluginInvoker
 				ErrorFrame error = new ErrorFrame();
 				// ErrorModel.setInternalErrorLogs(e.printStackTrace());
 			}
-
-		} else
-		{
-			ErrorModel.setPluginErrorCode(4);
-			ErrorModel.setPluginNameProblem(plugin.getName());
-			ErrorFrame error = new ErrorFrame();
 		}
+//		} else
+//		{
+//			try
+//			{
+//				ErrorModel.setPluginErrorCode(4);
+//				ErrorModel.setPluginNameProblem(plugin.getName());
+//				ErrorFrame error = new ErrorFrame();
+//			}
+//			catch(NullPointerException e)
+//			{
+//				System.out.println("nullpointer");
+//			}
+//		}
 	}
 
 	/**
